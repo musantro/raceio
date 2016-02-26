@@ -1,6 +1,7 @@
 Template.dashboard.events({
     "click #btnReadCSV": function storeData(event, template) {
         var result = {};
+        var fileId = Files.insert({})
 
         function store(data) {
             // Guarda los datos parseados en parseData
@@ -30,7 +31,7 @@ Template.dashboard.events({
                             value = Number(data[nColumns + k][nRows].replace(',', '.'));
                             result.values[nObjValue][k] = value;
 
-                        } // Pasar al sistema americano de notación decimal          
+                        }         
                     };
                     nColumns = nColumns + k
                 } while (nColumns < data.length - 1);
