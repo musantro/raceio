@@ -1,0 +1,84 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Race.io - Easy data visualization</title>
+</head>
+<template name="header">
+    <div class="navbar-fixed">
+        <nav class="red">
+            <a href="#" class="brand-logo center">Race.io</a>
+            <ul class="left hide-on-med-and-down">
+                {{#each leftmenu}}
+                <li class="no-padding"><a href="#" class="waves-effect waves-teal">{{name}}</a></li>
+                {{/each}}
+            </ul>
+            <ul id="slide-out" class="side-nav">
+                {{#each leftmenu}}
+                <li class="no-padding"><a href="#" class="waves-effect waves-teal">{{name}}</a></li>
+                {{/each}} 
+                {{#each rightmenu}}
+                <li class="no-padding"><a href="#" class="waves-effect waves-teal">{{name}}</a></li>
+                {{/each}}
+            </ul>
+            <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+        </nav>
+    </div>
+</template>
+
+<template name="dashboard">
+    <div class="row">
+        <div class="hide-on-small-only col m4 l4">
+            <div class="container">
+                <div class="section">
+                    <h5>{{fakeTitle}}</h5>
+                    <p>{{fakeParagraph}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m8 l8">
+            {{> upload}}
+        </div>
+    </div>
+</template>
+
+<template name="footer">
+    <footer class="page-footer red">
+        <div class="footer-copyright">
+            <div class="container">
+                Made by <a class="red-text text-lighten-3" href="http://github.com/musantro">Antonio Rodríguez</a>
+            </div>
+        </div>
+    </footer>
+</template>
+
+<template name="upload">
+    <div class="container">
+        {{#unless uploading}}
+        <div class="row center">
+            <div class="section">
+                <h5>Upload your CSV file</h5>
+                <p>We will handle it to make it easier to you to data analysis.</p>
+            </div>
+            <div class="divider"></div>
+        </div>
+        <div class="row center">
+            <form action="#">
+                <div class="file-field input-field">
+                    <div class="btn waves-effect waves-light blue">
+                        <span>Upload</span>
+                        <input type="file" id="csv-file" name="uploadCSV" />
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </form>
+        </div>
+        {{else}}
+        <div class="progress">
+            <div class="indeterminate"></div>
+        </div>
+        {{/unless}}
+    </div>
+</template>
