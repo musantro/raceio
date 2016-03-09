@@ -4,10 +4,11 @@ Router.route('/', {
 
 Router.route('/dashboard', {
 	path: '/dashboard/',
-	template: 'dashboard'
+	template: 'dashboardDefault'
 });
 
-Router.configure({
-	path: '/layouts/',
-	layoutTemplate: 'footer'
-});
+// CUANDO TENGAS UN LAYUP EN CONDICIONES HABLAMOS.
+// Router.configure({
+// 	path: '/layouts/',
+// 	layoutTemplate: 'footer'
+// });

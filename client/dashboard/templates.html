@@ -16,8 +16,7 @@
             <ul id="slide-out" class="side-nav">
                 {{#each leftmenu}}
                 <li class="no-padding"><a href="#" class="waves-effect waves-teal">{{name}}</a></li>
-                {{/each}} 
-                {{#each rightmenu}}
+                {{/each}} {{#each rightmenu}}
                 <li class="no-padding"><a href="#" class="waves-effect waves-teal">{{name}}</a></li>
                 {{/each}}
             </ul>
@@ -25,7 +24,6 @@
         </nav>
     </div>
 </template>
-
 <template name="dashboard">
     <div class="row">
         <div class="hide-on-small-only col m4 l4">
@@ -41,7 +39,6 @@
         </div>
     </div>
 </template>
-
 <template name="upload">
     <div class="container">
         {{#unless uploading}}
@@ -65,6 +62,12 @@
                 </div>
             </form>
         </div>
+        <div class="fixed-action-btn click-to-toggle" style="bottom:45px; right:24px;">
+            <a class="btn-floating btn-large red"><i class="large material-icons">add</i></a>
+            <ul>
+                <li><div class="btn-floating green"><i class="material-icons">publish</i></div></li>
+            </ul>
+        </div>
         {{else}}
         <div class="progress">
             <div class="indeterminate"></div>
@@ -72,4 +75,3 @@
         {{/unless}}
     </div>
 </template>
-

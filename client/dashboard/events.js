@@ -6,22 +6,32 @@ Template.header.events({
     }
 })
 
+
 Template.upload.events({
     'change [name="uploadCSV"]' (event, template) {
         template.uploading.set(true);
 
+        var newFile = Tests.insert({
+            exists: {
+                meta: false,
+                header: false,
+                units: false,
+                sensors: false
+            },
+        });
+
         Papa.parse(event.target.files[0], {
             header: false,
-            complete: function(results) {
-                template.uploading.set(false)
-                Meteor.call('parseUpload', results.data, (error, response) => {
+            preview: 50,
+            step: function(row) {
+                Meteor.call('parseRow', row.data, newFile, (error, response) => {
                     if (error) {
                         console.log(error.reason);
-                    } else {
-                        template.uploading.set(false);
-                        Materialize.toast("Parsing complete!", 4000);
                     }
                 });
+            },
+            complete: function() {
+                template.uploading.set(false)
             }
         });
         Materialize.toast("Upload complete!", 4000);
