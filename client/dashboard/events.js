@@ -11,14 +11,17 @@ Template.upload.events({
     'change [name="uploadCSV"]' (event, template) {
         template.uploading.set(true);
 
-        var newFile = Tests.insert({
+
+        newFile = Tests.insert({
+
+            current: "meta",
             exists: {
                 meta: false,
                 header: false,
                 units: false,
                 sensors: false
             },
-        });
+        })
 
         Papa.parse(event.target.files[0], {
             header: false,

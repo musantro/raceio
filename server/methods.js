@@ -1,27 +1,35 @@
 Meteor.methods({
     parseRow(row, ID) {
+        row = row[0];
+        var saveLocation = Tests.findOne({ _id: ID })["current"]
 
-        function exists(type, callback){
-            if(Tests.findOne({
-                _id: ID,
-                "exists[type]": true,
-            })){
-                return true;
-            } else {return false;};
-        };
-        
-        function save(arr) {
-
+        function isLineBreak(arr) {
+           if(!arr) {
+            return true;
+           } else {
+            return false;
+           }
         };
 
-        function isLineBreak(arr){
+        var rv = {};
+        if (saveLocation == "meta") {
+            key = row.shift();
+        }
+        for (var i = 0; i < row.length; ++i)
+            rv[i] = row[i];
 
+        function save(row, where, key) {
+            console.log(row, where);
+            //stores array in document.where in db
+            
+            Tests.update({ _id: ID }, { $push: {
+                    [where]: {[key]: row} } });
         };
 
-        if (!exists("meta") && !exists("header") && !exists("units") && !exists("sensor")) {
-            Tests.update({ _id: ID}, {$set: {"exists.meta": true}});
-            // and save row
-        } 
-
-    }
+        if(isLineBreak(row)){
+            saveLocation = "header";
+        } else {
+            save(row,saveLocation,key);
+        }
+    },
 })
