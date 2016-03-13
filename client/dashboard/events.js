@@ -25,7 +25,7 @@ Template.upload.events({
 
         Papa.parse(event.target.files[0], {
             header: false,
-            preview: 16,
+            // preview: 25,
             step: function(row) {
                 Meteor.call('parseRow', row.data, newFile, (error, response) => {
                     if (error) {
