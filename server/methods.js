@@ -2,7 +2,6 @@ Meteor.methods({
     parseRow(row, ID) {
         // Papaparse creates a nested array. So let's un-nest it.
         row = row[0];
-        // Let's define our main key (ONLY FOR METADATA)
 
         // Check in db where to store the row
         var saveLocation = Tests.findOne({ _id: ID })["current"]
@@ -48,12 +47,11 @@ Meteor.methods({
 
             if (where == "meta") {
                 var key = row.shift();
+                obj = {};
                 for (var i = 0; i < row.length; ++i)
-                    obj[key] = row[i];
+                    obj = row[i];
                 Tests.update({ _id: ID }, {
-                    $push: {
-                        [where]: obj,
-                    }
+                    $set: {[where + "." + key]: obj }
                 });
             } else if (where == "header") {
                 for (var i = 0; i < row.length; ++i)
