@@ -20,13 +20,13 @@ Template.upload.events({
                 header: false,
                 units: false,
                 sensors: false
-            },
-            meta: {},
+            }
         })
 
         Papa.parse(event.target.files[0], {
             header: false,
-            preview: 25,
+            preview: 100,
+            encoding: "ISO-8859-1",
             step: function(row) {
                 Meteor.call('parseRow', row.data, newFile, (error, response) => {
                     if (error) {
@@ -35,7 +35,8 @@ Template.upload.events({
                 });
             },
             complete: function() {
-                template.uploading.set(false)
+                template.uploading.set(false);
+                Materialize.toast("Done!", 4000);
             }
         });
         Materialize.toast("Upload complete!", 4000);

@@ -5,9 +5,7 @@ Meteor.methods({
 
         // Check in db where to store the row
         var saveLocation = Tests.findOne({ _id: ID })["current"]
-        console.log("row.length = ", row.length, "row[0]= ", row[0], " isLineBreak? ", isLineBreak(row), "saveLocation: ", saveLocation);
-
-        // Do it!
+            // Do it!
         if (isLineBreak(row)) {
             switch (saveLocation) {
                 case "meta":
@@ -20,7 +18,7 @@ Meteor.methods({
                 case "header":
                     saveLocation = Tests.update({ _id: ID }, {
                         $set: {
-                            ["current"]: "values"
+                            ["current"]: "sensor"
                         }
                     })
                     break;
@@ -33,6 +31,13 @@ Meteor.methods({
 
 
         // FUNCTIONS
+        function exists(parent, prop, callback) {
+            if (Tests.findOne({ '_id': ID, [parent + "." + prop]: { $exists: true } })) {
+                return true;
+            } else {
+                return false;
+            };
+        };
 
         function isLineBreak(arr) {
             if (arr.length <= 1 && arr[0] === "") {
@@ -51,24 +56,48 @@ Meteor.methods({
                 for (var i = 0; i < row.length; ++i)
                     obj = row[i];
                 Tests.update({ _id: ID }, {
-                    $set: {[where + "." + key]: obj }
+                    $set: {
+                        [where + "." + key]: obj
+                    }
                 });
             } else if (where == "header") {
-                for (var i = 0; i < row.length; ++i)
+                for (var i = 0; i < row.length; ++i) {
                     obj[i] = row[i];
-                Tests.update({ _id: ID }, {
-                    $push: {
-                        [where]: obj,
-                    }
-                })
-            } else if (where == "values") {
-                for (var i = 0; i < row.length; ++i)
+                    if (!exists("sensor." + i, "name")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".name"]: obj[i],
+                            }
+                        })
+                    } else if (!exists("sensor." + i, "customName")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".customName"]: obj[i],
+                            }
+                        })
+                    } else if (!exists("sensor." + i, "units")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".units"]: obj[i],
+                            }
+                        })
+                    } else if (!exists("sensor." + i, "number")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".number"]: obj[i],
+                            }
+                        })
+                    };
+                };
+            } else if (where == "sensor") {
+                for (var i = 0; i < row.length; ++i) {
                     obj[i] = row[i];
-                Tests.update({ _id: ID }, {
-                    $push: {
-                        [where]: obj,
-                    }
-                });
+                    Tests.update({ _id: ID }, {
+                        $push: {
+                            ["sensor." + i + ".values"]: obj[i],
+                        }
+                    });
+                };
             }
         };
 
