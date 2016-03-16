@@ -1,5 +1,5 @@
 # Raceio
-A racing data acquisition visualization web app.
+A racing data acquisition visualization web app, that works in Meteor.
 
 **Currently in progress**
 
