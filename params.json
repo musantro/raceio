@@ -1,6 +1,6 @@
 {
   "name": "Raceio",
   "tagline": "a Racing Data Acquisition visualization web app. Currently in progress.",
-  "body": "# Raceio\r\n\r\n[![Join the chat at https://gitter.im/musantro/raceio](https://badges.gitter.im/musantro/raceio.svg)](https://gitter.im/musantro/raceio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)\r\nA racing data acquisition visualization web app.\r\n\r\n**Currently in progress**\r\n\r\nMIT @ [Musantro](http://github.com/musantro)\r\n",
+  "body": "# Raceio\r\n\r\n[![Join the chat at https://gitter.im/musantro/raceio](https://badges.gitter.im/musantro/raceio.svg)](https://gitter.im/musantro/raceio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)\r\n\r\nA racing data acquisition visualization web app.\r\n\r\n**Currently in progress**\r\n\r\nMIT @ [Musantro](http://github.com/musantro)\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
