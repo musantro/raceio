@@ -21,7 +21,7 @@ insecure                # Allow all DB writes from clients (for prototyping)
 materialize:materialize
 harrison:papa-parse
 anti:fake
-chart:chart
 reactive-var
 iron:router
 ostrio:files
+maazalik:highcharts

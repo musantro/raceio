@@ -25,7 +25,7 @@ Template.upload.events({
 
         Papa.parse(event.target.files[0], {
             header: false,
-            preview: 100,
+            // preview: 100,
             encoding: "ISO-8859-1",
             step: function(row) {
                 Meteor.call('parseRow', row.data, newFile, (error, response) => {

@@ -91,10 +91,9 @@ Meteor.methods({
                 };
             } else if (where == "sensor") {
                 for (var i = 0; i < row.length; ++i) {
-                    obj[i] = row[i];
                     Tests.update({ _id: ID }, {
                         $push: {
-                            ["sensor." + i + ".values"]: obj[i],
+                            ["sensor." + i + ".values"]: Number(row[i]),
                         }
                     });
                 };
