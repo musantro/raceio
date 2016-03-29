@@ -1,14 +1,16 @@
 Router.route('/', {
-	template: 'home'
+	name: 'home',
+	template: 'home',
+	layout: 'layout'
 });
 
 Router.route('/dashboard', {
 	path: '/dashboard/',
-	template: 'dashboardDefault'
+	template: 'dashboardDefault',
+	layout: 'layout'
 });
 
-// CUANDO TENGAS UN LAYUP EN CONDICIONES HABLAMOS.
-// Router.configure({
-// 	path: '/layouts/',
-// 	layoutTemplate: 'footer'
-// });
+Router.configure({
+	path: '/layouts/',
+	layoutTemplate: 'layout'
+});
