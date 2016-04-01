@@ -1,14 +1,9 @@
 <template name="mainLayout">
-	{{> header}}
-    {{> yield}}
-	{{> footer}}
+    {{> header}} {{> yield}} {{> footer}}
 </template>
-
 <template name="layout">
-    {{> header}}
-    {{> yield}}
+    {{> header}} {{> yield}}
 </template>
-
 <template name="header">
     <div class="navbar-fixed">
         <nav class="red">
@@ -16,6 +11,13 @@
             <ul class="left hide-on-med-and-down">
                 {{#each leftmenu}}
                 <li class="no-padding"><a href="{{url}}" class="waves-effect waves-teal">{{name}}</a></li>
+                {{/each}}
+            </ul>
+            <ul class="right hide-on-med-and-down">
+                {{#each rightmenu}}
+                <li class="no-padding">
+                    <a href="{{url}}" class="waves-effect waves-teal">{{name}}</a>
+                </li>
                 {{/each}}
             </ul>
             <ul id="slide-out" class="side-nav">
@@ -29,7 +31,6 @@
         </nav>
     </div>
 </template>
-
 <template name="footer">
     <footer class="page-footer red">
         <div class="footer-copyright">
