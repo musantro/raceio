@@ -1,44 +1,105 @@
 Meteor.methods({
-    parseUpload(data) {
-        // check(data, Array); Para usar esto, https://themeteorchef.com/snippets/using-the-check-package/#tmc-adding-check
+    parseRow(row, ID) {
+        // Papaparse creates a nested array. So let's un-nest it.
+        row = row[0];
 
-        var result = {};
-        var fileId = Files.insert({})
+        // Check in db where to store the row
+        var saveLocation = Tests.findOne({ _id: ID })["current"]
+            // Do it!
+        if (isLineBreak(row)) {
+            switch (saveLocation) {
+                case "meta":
+                    saveLocation = Tests.update({ _id: ID }, {
+                        $set: {
+                            ["current"]: "header"
+                        }
+                    })
+                    break;
+                case "header":
+                    saveLocation = Tests.update({ _id: ID }, {
+                        $set: {
+                            ["current"]: "sensor"
+                        }
+                    })
+                    break;
+            }
 
-        // parseUpload guarda los datos parseados en el mejor formato Time-Series
-        
-        var freq = 1 / Number(data[2][2].replace(',', '.')); // Lo usaremos para truncar los datos en segundos
-
-
-        for (var nRows = 0; nRows < data[data[1].length - 1].length; nRows++) {
-            var nColumns = 0;
-            var k = 0;
-            var nObjValue = -1;
-            do {
-                if (nColumns == 0) {
-                    result = {
-                        type: data[nColumns][nRows],
-                        values: {},
-                    }
-                    nColumns++;
-                } else {
-                    nObjValue++;
-                    for (var k = 0; k < freq && nColumns + k < data.length - 1; k++) {
-                        if (k == 0) {
-                            result.values[nObjValue] = {};
-
-                        };
-                        // console.log("data[", nColumns, " + ", k, "][", nRows, "] = ", data[nColumns + k][nRows]);
-                        value = Number(data[nColumns + k][nRows].replace(',', '.'));
-                        result.values[nObjValue][k] = value;
-
-                    }
-                };
-                console.log(fileId, result.values[nObjValue]);
-                Files.update({_id: "fileId"}), {$push: {values: result.values[nObjValue]}};
-                nColumns = nColumns + k
-            } while (nColumns < data.length - 1);
-            Files.insert(result);
+        } else {
+            save(row, saveLocation);
         }
-    }
+
+
+
+        // FUNCTIONS
+        function exists(parent, prop, callback) {
+            if (Tests.findOne({ '_id': ID, [parent + "." + prop]: { $exists: true } })) {
+                return true;
+            } else {
+                return false;
+            };
+        };
+
+        function isLineBreak(arr) {
+            if (arr.length <= 1 && arr[0] === "") {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        function save(row, where) {
+            var obj = {};
+
+            if (where == "meta") {
+                var key = row.shift();
+                obj = {};
+                for (var i = 0; i < row.length; ++i)
+                    obj = row[i];
+                Tests.update({ _id: ID }, {
+                    $set: {
+                        [where + "." + key]: obj
+                    }
+                });
+            } else if (where == "header") {
+                for (var i = 0; i < row.length; ++i) {
+                    obj[i] = row[i];
+                    if (!exists("sensor." + i, "name")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".name"]: obj[i],
+                            }
+                        })
+                    } else if (!exists("sensor." + i, "customName")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".customName"]: obj[i],
+                            }
+                        })
+                    } else if (!exists("sensor." + i, "units")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".units"]: obj[i],
+                            }
+                        })
+                    } else if (!exists("sensor." + i, "number")) {
+                        Tests.update({ _id: ID }, {
+                            $set: {
+                                ["sensor." + i + ".number"]: obj[i],
+                            }
+                        })
+                    };
+                };
+            } else if (where == "sensor") {
+                for (var i = 0; i < row.length; ++i) {
+                    Tests.update({ _id: ID }, {
+                        $push: {
+                            ["sensor." + i + ".values"]: Number(row[i]),
+                        }
+                    });
+                };
+            }
+        };
+
+
+    },
 })
