@@ -19,3 +19,10 @@ Template.dashboard.helpers({
         return Fake.paragraph(5)
     }
 })
+
+Template.tests.onCreated(function() {
+    var self = this;
+    self.autorun(function() {
+        self.subscribe('tests');
+    });
+});

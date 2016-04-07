@@ -1,0 +1,10 @@
+<template name="sidenav">
+    <ul id="slide-out" class="side-nav">
+        {{#each leftmenu}}
+        <li class="no-padding"><a href="{{url}}" class="waves-effect waves-teal">{{name}}</a></li>
+        {{/each}} {{#each rightmenu}}
+        <li class="no-padding"><a href="{{url}}" class="waves-effect waves-teal">{{name}}</a></li>
+        {{/each}}
+    </ul>
+    <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+</template>

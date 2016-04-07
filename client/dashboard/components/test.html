@@ -1,3 +1,13 @@
-<template name="test">
-    <a href="#!" class="collection-item">{{date}} {{time}}</a>
+<template name="cardtest">
+        <div class="col s12 m4">
+            <a href="/test/{{id}}">
+                <div class="card waves-effect waves-block waves-light green lighten-2">
+                    <div class="card-content white-text">
+                        <span class="card-title">{{date}} {{time}}</span>
+                        <p>By {{user}}</p>
+                        <p>{{desc}}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
 </template>

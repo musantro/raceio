@@ -1,8 +1,27 @@
 <template name="tests">
-    <h5>Tests</h5>
-    <div class="collection with-header">
-    {{#each tests}}
-    	{{> test date = meta.Date time = meta.Time}}
-	{{/each}}
+    <div class="container">
+        <h1>Tests</h1> {{#if Template.subscriptionsReady}}
+        <div class="divider"></div>
+        <div class="section">{{> upload}}</div>
+        <div class="section">
+            <div class="row">
+                {{#each tests}} {{> cardtest date = meta.Date time = meta.Time desc=meta.Comment user=meta.User id = _id}} {{/each}}
+            </div>
+        </div>
+        {{else}}
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
     </div>
 </template>

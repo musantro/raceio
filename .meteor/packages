@@ -17,12 +17,13 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
+
 materialize:materialize
 harrison:papa-parse
 anti:fake
 reactive-var
 iron:router
-ostrio:files
 maazalik:highcharts
 standard-minifier-css
 standard-minifier-js
+aldeed:simple-schema
