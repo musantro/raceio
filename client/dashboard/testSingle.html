@@ -1,10 +1,19 @@
 <template name="testSingle">
-    <div class="container">
-        <h1>{{meta.Date}} at {{meta.Time}}</h1>
-        <h3> by {{meta.User}}</h3>
+    <div class="container-fluid">
+        <row>
+            <div class="container-fluid">
+                <h2>Test {{meta.Date}} at {{meta.Time}}</h2>
+            </div>
+        </row>
         <div class="row">
             <div class="col s12 l8 push-l4">
-                <h5>Time vs. RPM</h5>
+                <h5>Sensors</h5>
+                {{#each tag}}
+                <div class="chip">
+                  {{name}}
+                </div>
+                {{/each}}
+                <h5>Graphs</h5>
                 <div id="graph-area" style="min-width: 310px; height: 400px;"></div>
             </div>
             <div class="col s12 l4 pull-l8">

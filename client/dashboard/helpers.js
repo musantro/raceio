@@ -35,3 +35,16 @@ Template.registerHelper("objectToPairs", function(object){
         };
     });
 });
+
+
+Template.testSingle.helpers({
+tag: function () {
+    var arr = [], sensor = this.sensor;
+    for (var key in sensor) {
+        var obj = {};
+        obj.name = sensor[key]["name"];
+        arr.push(obj);
+    }
+    return arr;
+  }
+});

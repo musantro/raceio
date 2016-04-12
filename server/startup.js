@@ -1,3 +1,1 @@
-Meteor.startup(function(){
-	Tests.remove({});	// Elimina todos los datos antes de subir
-})
+// De momento esto no hace nada
