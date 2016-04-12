@@ -1,32 +1,44 @@
 <template name="testSingle">
     <div class="container-fluid">
-        <row>
+        <div class="row">
             <div class="container-fluid">
                 <h2>Test {{meta.Date}} at {{meta.Time}}</h2>
             </div>
-        </row>
+        </div>
         <div class="row">
-            <div class="col s12 l8 push-l4">
-                <h5>Sensors</h5>
-                {{#each tag}}
-                <div class="chip">
-                  {{name}}
-                </div>
-                {{/each}}
+            <div class="col s12 l9 push-l3">
                 <h5>Graphs</h5>
                 <div id="graph-area" style="min-width: 310px; height: 400px;"></div>
             </div>
-            <div class="col s12 l4 pull-l8">
-                <table class="bordered">
-                    <tbody>
-                        {{#each objectToPairs meta}}
-                        <tr>
-                            <td>{{key}}</td>
-                            <td>{{value}}</td>
-                        </tr>
+            <div class="col s12 l3 pull-l9">
+                <div class="card blue ligthen-1" style="min-height: 200px">
+                    <div class="card-content white-text">
+                        <span class="card-title activator ">Details<i class="material-icons right">add</i></span>
+                        <p>Of the test by {{meta.User}} </p>
+                        <p>on {{meta.Date}} at {{meta.Time}}</p>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">Details<i class="material-icons right">close</i></span>
+                        <table class="bordered">
+                            <tbody>
+                                {{#each objectToPairs meta}}
+                                <tr>
+                                    <td>{{key}}</td>
+                                    <td>{{value}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="input-field col s12">
+                    <h5>Select Sensors</h5>
+                    <select multiple>
+                        {{#each tag}}
+                        <option value="">{{name}}</option>
                         {{/each}}
-                    </tbody>
-                </table>
+                    </select>
+                </div>
             </div>
         </div>
     </div>

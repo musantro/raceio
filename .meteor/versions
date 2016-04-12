@@ -51,6 +51,7 @@ materialize:materialize@0.97.5
 mdg:validation-error@0.5.1
 meteor@1.1.13
 meteor-base@1.0.3
+meteortoys:toykit@2.2.1
 minifier-css@1.1.10
 minifier-js@1.1.10
 minimongo@1.0.13
@@ -60,6 +61,7 @@ modules@0.5.2
 modules-runtime@0.6.2
 mongo@1.1.6
 mongo-id@1.0.3
+msavin:jetsetter@1.5.2
 npm-mongo@1.4.42
 observe-sequence@1.0.10
 ordered-dict@1.0.6
