@@ -14,7 +14,6 @@ Template.testSingle.onCreated(function() {
 });
 
 Template.testSingle.rendered = function() {
-            console.log("_id: ", testObject._id)
             var yData = testObject.sensor[13].values;
             var xData = testObject.sensor[0].values;
 
@@ -56,4 +55,4 @@ Template.testSingle.rendered = function() {
 
             jQuery('#graph-area').highcharts(returnobject);
 
-}
+};

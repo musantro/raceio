@@ -27,6 +27,7 @@ Template.tests.onCreated(function() {
     });
 });
 
+// Esto es para sacar los key-values
 Template.registerHelper("objectToPairs", function(object){
     return _.map(object, function(value, key) {
         return {
@@ -34,4 +35,17 @@ Template.registerHelper("objectToPairs", function(object){
             value: value
         };
     });
+});
+
+// Esto es para sacar los sensores
+Template.testSingle.helpers({
+tag: function () {
+    var arr = [], sensor = this.sensor;
+    for (var key in sensor) {
+        var obj = {};
+        obj.name = sensor[key]["name"];
+        arr.push(obj);
+    }
+    return arr;
+  }
 });

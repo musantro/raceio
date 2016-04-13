@@ -6,6 +6,9 @@ Template.header.events({
     }
 })
 
+Template.testSingle.onRendered(function() {
+    $('select').material_select();
+})
 
 Template.upload.events({
     'change [name="uploadCSV"]' (event, template) {
