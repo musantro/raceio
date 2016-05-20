@@ -1,3 +1,5 @@
+// header
+
 Template.header.events({
     "click .button-collapse": function(event, template) {
         template.$(".button-collapse").sideNav({
@@ -6,10 +8,22 @@ Template.header.events({
     }
 })
 
+
+// testSingle
+
 Template.testSingle.onRendered(function() {
     $('select').material_select();
 })
 
+Template.testSingle.events({
+    "change #select-sensors": function(event, template){
+        console.log(template.$('#select-sensors').val())
+    }
+})
+
+
+
+// upload
 Template.upload.events({
     'change [name="uploadCSV"]' (event, template) {
         template.uploading.set(true);

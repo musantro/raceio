@@ -37,7 +37,7 @@ Template.registerHelper("objectToPairs", function(object){
     });
 });
 
-// Esto es para sacar los sensores
+// testSingle
 Template.testSingle.helpers({
 tag: function () {
     var arr = [], sensor = this.sensor;
