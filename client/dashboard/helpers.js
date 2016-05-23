@@ -1,4 +1,4 @@
-// Esto define el menú
+// Esto define el menu
 Template.header.helpers({
     leftmenu: [{ name: "Dashboard"}, { name: "Report" }, { name: "History" }],
     rightmenu: [{ name: "My Account" }, { name: "Logout" }]
@@ -38,12 +38,15 @@ Template.registerHelper("objectToPairs", function(object){
 });
 
 // testSingle
+
+// Esto es para preparar el dropdown de sensores
 Template.testSingle.helpers({
-tag: function () {
+tag: function () {                          
     var arr = [], sensor = this.sensor;
     for (var key in sensor) {
         var obj = {};
         obj.name = sensor[key]["name"];
+        obj.id= key;
         arr.push(obj);
     }
     return arr;

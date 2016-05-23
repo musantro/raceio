@@ -19,7 +19,7 @@ Template.testSingle.onCreated(function() {
 
 // the graph it will display once rendered
 
-Template.testSingle.rendered = function() {
+Template.testSingle.rendered = function () {
         var yData = testObject.sensor[13].values;
         var xData = testObject.sensor[0].values;
 
