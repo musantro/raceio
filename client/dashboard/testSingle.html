@@ -11,9 +11,9 @@
             <div class="col s12 l3 pull-l9">
                 <div class="input-field">
                     <h5>Select Sensors</h5>
-                    <select multiple>
+                    <select id="select-sensors" multiple>
                         {{#each tag}}
-                        <option value="">{{name}}</option>
+                        <option value="{{id}}">{{name}}</option>
                         {{/each}}
                     </select>
                 </div>
