@@ -122,11 +122,19 @@ Template.upload.events({
 
                 uploadInstance.on('end', function(error, fileObj) {
                     if (error) {
-                        alert('Error during upload: ' + error.reason);
+                        Materialize.toast('Error during upload: ' + error.reason, 4000)
                     } else {
-                        alert('File "' + fileObj.name + '" successfully uploaded');
+                        Materialize.toast('File "' + fileObj.name + '" successfully uploaded', 4000)
                     }
                     template.currentFile.set(false);
+                    Meteor.call("bench", fileObj, function(error, result) {
+                        if (error) {
+                            console.log("error", error);
+                        }
+                        if (result) {
+                            Materialize.toast("Bench done", 4000);
+                        }
+                    });
                 });
 
                 uploadInstance.start();
