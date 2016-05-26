@@ -1,12 +1,22 @@
 // Esto define el menu
 Template.header.helpers({
-    leftmenu: [{ name: "Dashboard"}, { name: "Report" }, { name: "History" }],
-    rightmenu: [{ name: "My Account" }, { name: "Logout" }]
+    leftmenu: [{
+        name: "Dashboard"
+    }, {
+        name: "Report"
+    }, {
+        name: "History"
+    }],
+    rightmenu: [{
+        name: "My Account"
+    }, {
+        name: "Logout"
+    }]
 });
 // Esto establece si se está subiendo algo o no
 Template.upload.helpers({
-    uploading() {
-        return Template.instance().uploading.get();
+    currentFile: function() {
+        return Template.instance().currentFile.get();
     }
 });
 
@@ -28,7 +38,7 @@ Template.tests.onCreated(function() {
 });
 
 // Esto es para sacar los key-values
-Template.registerHelper("objectToPairs", function(object){
+Template.registerHelper("objectToPairs", function(object) {
     return _.map(object, function(value, key) {
         return {
             key: key,
@@ -41,14 +51,15 @@ Template.registerHelper("objectToPairs", function(object){
 
 // Esto es para preparar el dropdown de sensores
 Template.testSingle.helpers({
-tag: function () {                          
-    var arr = [], sensor = this.sensor;
-    for (var key in sensor) {
-        var obj = {};
-        obj.name = sensor[key]["name"];
-        obj.id= key;
-        arr.push(obj);
+    tag: function() {
+        var arr = [],
+            sensor = this.sensor;
+        for (var key in sensor) {
+            var obj = {};
+            obj.name = sensor[key]["name"];
+            obj.id = key;
+            arr.push(obj);
+        }
+        return arr;
     }
-    return arr;
-  }
 });
