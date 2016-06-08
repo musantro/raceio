@@ -1,42 +1,39 @@
 Meteor.methods({
 
     'bench': function(file) {
-        var csv = require('csv-parse')
-        var fs = require('fs')
-        var Fiber = require('fibers');
-        var es = require('event-stream');
-
-        var now = Date.now()
-        var rows = 0
+        var csv = require('fast-csv');
+        var fs = require('fs');
+        var rows = 0;
+        var now = Date.now();
 
         Tests.insert({
             _id: file._id,
             current: "meta",
-        })
+        });
 
-        var s = fs.createReadStream(file.path)
-            .pipe(es.split())
-            .pipe(es.mapSync(function(line) {
-                s.pause();
-
-                line = "\"" + line.toString() + "\"";
-                rows++;
-
-                if (rows % 100 == 0 && rows != 0) {
-                    console.log(rows)
-                };
-                console.log("line:\n", line);
-
-                Meteor.bindEnvironment(parseRow(line,file._id))
-
-                s.resume();
-            }))
-            .on('error', function() {
-                console.log('Error reading File')
-            })
-            .on('end', function() {
-                console.log('parsed ' + rows + ' rows in ' + (Date.now() - now) / 1000 + ' s')
-            })
+        Meteor.setTimeout(function() {
+            var stream = fs.createReadStream(file.path)
+                .pipe(csv())
+                .on('readable', Meteor.bindEnvironment(function() {
+                    rows++
+                    var row;
+                    while (null !== (row = stream.read())) {
+                      if (rows <= 30) {
+                        // console.log(rows, " Rows counted")
+                        console.log("# ",rows," ",row)
+                        parseRow(row, file._id)
+                      };
+                    }
+                }, function(error) {
+                    console.log(error);
+                }))
+                .on('error', function(err) {
+                    console.log('Error reading File');
+                })
+                .on('end', function(count) {
+                    console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
+                })
+        }, 1000)
 
         function parseRow(row, ID) {
             // Check in db where to store the row
