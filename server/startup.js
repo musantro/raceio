@@ -1,1 +1,4 @@
-// De momento esto no hace nada
+// Testing Mode activated!
+Tests.remove({});
+Csvs.remove({});
+Sensors.remove({})

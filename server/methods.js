@@ -1,105 +1,142 @@
 Meteor.methods({
-    parseRow(row, ID) {
-        // Papaparse creates a nested array. So let's un-nest it.
-        row = row[0];
 
-        // Check in db where to store the row
-        var saveLocation = Tests.findOne({ _id: ID })["current"]
-            // Do it!
-        if (isLineBreak(row)) {
-            switch (saveLocation) {
-                case "meta":
-                    saveLocation = Tests.update({ _id: ID }, {
-                        $set: {
-                            ["current"]: "header"
-                        }
-                    })
-                    break;
-                case "header":
-                    saveLocation = Tests.update({ _id: ID }, {
-                        $set: {
-                            ["current"]: "sensor"
-                        }
-                    })
-                    break;
-            }
+    'bench': function(file) {
+        var csv = require('fast-csv');
+        var fs = require('fs');
 
-        } else {
-            save(row, saveLocation);
-        }
+        var rows = 0;
+        var now = Date.now();
+        var metaReadFinish = false;
+        var emptyRows = 0;
+        var tempArr = [];
+        var sampleRate = 0;
+        var sensorNames;
+        var countRow = 0;
+        var tempValues = [];
 
+        Tests.insert({
+            _id: file._id,
+        });
 
-
-        // FUNCTIONS
-        function exists(parent, prop, callback) {
-            if (Tests.findOne({ '_id': ID, [parent + "." + prop]: { $exists: true } })) {
-                return true;
-            } else {
-                return false;
-            };
-        };
-
-        function isLineBreak(arr) {
-            if (arr.length <= 1 && arr[0] === "") {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        function save(row, where) {
-            var obj = {};
-
-            if (where == "meta") {
-                var key = row.shift();
-                obj = {};
-                for (var i = 0; i < row.length; ++i)
-                    obj = row[i];
-                Tests.update({ _id: ID }, {
-                    $set: {
-                        [where + "." + key]: obj
+        Meteor.setTimeout(function() {
+            var stream = fs.createReadStream(file.path)
+                .pipe(csv())
+                .on('readable', Meteor.bindEnvironment(function() {
+                    rows++
+                    if (rows % 1000 === 0) {
+                        console.log("#" + rows + " readed")
                     }
-                });
-            } else if (where == "header") {
-                for (var i = 0; i < row.length; ++i) {
-                    obj[i] = row[i];
-                    if (!exists("sensor." + i, "name")) {
-                        Tests.update({ _id: ID }, {
-                            $set: {
-                                ["sensor." + i + ".name"]: obj[i],
+                    var row;
+                    while (null !== (row = stream.read())) {
+
+                        if (rows <= 1500) { // This is a bug, only reads 1500
+                            if (emptyRows < 2) {
+                                if (row.length == 0) {
+                                    var arr = tempArr;
+                                    tempArr = [];
+
+                                    emptyRows++;
+                                    console.log("Detected empty line on #" + rows);
+
+                                    switch (emptyRows) {
+                                        // SAVE FIRST CSV SECTION
+                                        case 1:
+                                            var metaObj = {};
+                                            for (var i = 2; i < arr.length; i++) {
+                                                key = arr[i].shift();
+                                                if (arr[i].length <= 1) {
+                                                    metaObj[key] = arr[i][0]
+                                                } else {
+                                                    metaObj[key] = arr[i]
+                                                }
+                                            };
+
+                                            sampleRate = Number(metaObj["Sample Rate"])
+                                            console.log(sampleRate + " Hz")
+                                            Tests.update({
+                                                _id: file._id
+                                            }, {
+                                                $set: {
+                                                    "meta": metaObj
+                                                }
+                                            });
+
+                                            break;
+
+                                            // SAVE SECOND CSV SECTION
+                                        case 2:
+                                            sensorNames = arr[0]
+                                            for (var i = 0; i < arr[0].length; i++) {
+                                                // console.log(i,"arr[0] = ",arr[0]);
+                                                Sensors.insert({
+                                                    "fromTest": file._id,
+                                                    "name": arr[0][i],
+                                                    "customName": arr[1][i],
+                                                    "units": arr[2][i],
+                                                    "sensorId": arr[3][i]
+                                                })
+                                            }
+
+                                            break;
+
+                                    }
+                                } else {
+                                    tempArr.push(row);
+                                };
+                            } else {
+                                // SAVE THIRD CSV SECTION
+                                if (tempValues.length == 0) {
+                                    tempValues = new Array(row.length);
+                                    for (var i = 0; i < row.length; i++) {
+                                        tempValues[i] = new Array(sampleRate);
+                                    }
+                                }
+                                for (var i = 0; i < row.length; i++) {
+                                    tempValues[i][countRow] = row[i];
+                                }
+                                countRow++;
+                                if (countRow == sampleRate) {
+                                    countRow = 0;
+                                    var arr = tempValues;
+                                    tempValues = [];
+                                    for (var i = 0; i < arr.length; i++) {
+                                        Sensors.update({
+                                            "fromTest": file._id,
+                                            "name": sensorNames[i]
+                                        }, {
+                                            $push: {
+                                                "values": arr[i]
+                                            }
+                                        });
+                                    }
+                                }
                             }
-                        })
-                    } else if (!exists("sensor." + i, "customName")) {
-                        Tests.update({ _id: ID }, {
-                            $set: {
-                                ["sensor." + i + ".customName"]: obj[i],
-                            }
-                        })
-                    } else if (!exists("sensor." + i, "units")) {
-                        Tests.update({ _id: ID }, {
-                            $set: {
-                                ["sensor." + i + ".units"]: obj[i],
-                            }
-                        })
-                    } else if (!exists("sensor." + i, "number")) {
-                        Tests.update({ _id: ID }, {
-                            $set: {
-                                ["sensor." + i + ".number"]: obj[i],
-                            }
-                        })
-                    };
-                };
-            } else if (where == "sensor") {
-                for (var i = 0; i < row.length; ++i) {
-                    Tests.update({ _id: ID }, {
-                        $push: {
-                            ["sensor." + i + ".values"]: Number(row[i]),
-                        }
-                    });
-                };
-            }
-        };
+                        };
 
 
-    },
+
+                    }
+                }, function(error) {
+                    console.log(error);
+                }))
+                .on('error', function(err) {
+                    console.log('Error reading File');
+                })
+                .on('end', Meteor.bindEnvironment(function(count) {
+                    // var arr = tempArr;
+                    // tempArr = [];
+                    // for (var i = 0; i < arr.length; i++) {
+                    //     Sensors.update({
+                    //         "fromTest": file._id,
+                    //         "name": sensorNames[i]
+                    //     }, {
+                    //         $push: {
+                    //             "values": arr[i]
+                    //         }
+                    //     });
+                    // }
+                    console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
+                }))
+        }, 1000)
+    }
 })

@@ -59,7 +59,7 @@ Template.testSingle.events({
                             }
                         },
                         labels: {
-                            format: '{value} '+ testObject.sensor[sensors[i]].units,
+                            format: '{value} ' + testObject.sensor[sensors[i]].units,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
@@ -74,7 +74,7 @@ Template.testSingle.events({
                             }
                         },
                         labels: {
-                            format: '{value} '+ testObject.sensor[sensors[i]].units,
+                            format: '{value} ' + testObject.sensor[sensors[i]].units,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
@@ -99,37 +99,46 @@ Template.testSingle.events({
 
 // upload
 Template.upload.events({
-    'change [name="uploadCSV"]' (event, template) {
-        template.uploading.set(true);
+    'change [name="uploadCSV"]': function(event, template) {
+        if (event.currentTarget.files && event.currentTarget.files[0]) {
+            // We upload only one file, in case
+            // there was multiple files selected
+            var file = event.currentTarget.files[0];
+            if (file) {
+                var uploadInstance = Csvs.insert({
+                    file: file,
+                    streams: 'dynamic',
+                    chunkSize: 'dynamic'
+                }, false);
 
-
-        newFile = Tests.insert({
-
-            current: "meta",
-            exists: {
-                meta: false,
-                header: false,
-                units: false,
-                sensors: false
-            }
-        })
-
-        Papa.parse(event.target.files[0], {
-            header: false,
-            // preview: 100,
-            encoding: "ISO-8859-1",
-            step: function(row) {
-                Meteor.call('parseRow', row.data, newFile, (error, response) => {
-                    if (error) {
-                        console.log(error.reason);
-                    }
+                uploadInstance.on('start', function() {
+                    template.currentFile.set(this);
                 });
-            },
-            complete: function() {
-                template.uploading.set(false);
-                Materialize.toast("Done!", 4000);
+
+                uploadInstance.on('error', function(error) {
+                    console.error(error);
+                    template.currentFile.set(false);
+                });
+
+                uploadInstance.on('end', function(error, fileObj) {
+                    if (error) {
+                        Materialize.toast('Error during upload: ' + error.reason, 4000)
+                    } else {
+                        Materialize.toast('File "' + fileObj.name + '" successfully uploaded', 4000)
+                    }
+                    template.currentFile.set(false);
+                    Meteor.call("bench", fileObj, function(error, result) {
+                        if (error) {
+                            console.log("error", error);
+                        }
+                        if (result) {
+                            Materialize.toast("Bench done", 4000);
+                        }
+                    });
+                });
+
+                uploadInstance.start();
             }
-        });
-        Materialize.toast("Upload complete!", 4000);
+        }
     }
 });

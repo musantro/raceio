@@ -6,3 +6,7 @@ A racing data acquisition visualization web app, that works in Meteor.
 **Currently in progress**
 
 MIT @ [Musantro](http://github.com/musantro)
+
+# Current Bugs and limitations
+
+* Right now it only read 1500 rows due to a bug. Check it [here](https://github.com/musantro/raceio/issues/27).
