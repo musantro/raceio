@@ -88,11 +88,12 @@ Meteor.methods({
                                 if (tempValues.length == 0) {
                                     tempValues = new Array(row.length);
                                     for (var i = 0; i < row.length; i++) {
-                                        tempValues[i] = new Array(sampleRate);
+                                        tempValues[i] = {};
                                     }
                                 }
                                 for (var i = 0; i < row.length; i++) {
-                                    tempValues[i][countRow] = row[i];
+                                    var timestamp = Math.floor(Number(row[0]) % 1 * 1000);
+                                    tempValues[i][timestamp] = row[i];
                                 }
                                 countRow++;
                                 if (countRow == sampleRate) {
@@ -104,8 +105,8 @@ Meteor.methods({
                                             "fromTest": file._id,
                                             "name": sensorNames[i]
                                         }, {
-                                            $push: {
-                                                "values": arr[i]
+                                            $set: {
+                                                ["values." + Math.floor(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
                                             }
                                         });
                                     }
@@ -123,20 +124,23 @@ Meteor.methods({
                     console.log('Error reading File');
                 })
                 .on('end', Meteor.bindEnvironment(function(count) {
-                    // var arr = tempArr;
-                    // tempArr = [];
-                    // for (var i = 0; i < arr.length; i++) {
-                    //     Sensors.update({
-                    //         "fromTest": file._id,
-                    //         "name": sensorNames[i]
-                    //     }, {
-                    //         $push: {
-                    //             "values": arr[i]
-                    //         }
-                    //     });
-                    // }
+
+                    if (tempValues.length != 0) {
+                        var arr = tempValues;
+                        tempValues = [];
+                        for (var i = 0; i < arr.length; i++) {
+                            Sensors.update({
+                                "fromTest": file._id,
+                                "name": sensorNames[i]
+                            }, {
+                                $set: {
+                                    ["values." + Math.floor(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
+                                }
+                            });
+                        }
+                    }
                     console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
                 }))
-        }, 1000)
+        }, 5000)
     }
 })
