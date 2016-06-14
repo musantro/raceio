@@ -62,3 +62,7 @@ Template.testSingle.rendered = function () {
     jQuery('#graph-area').highcharts(returnobject);
 
 };
+
+Template.upload.onCreated(function() {
+    this.currentFile = new ReactiveVar(false);
+});
