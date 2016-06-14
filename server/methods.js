@@ -141,6 +141,6 @@ Meteor.methods({
                     }
                     console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
                 }))
-        }, 5000)
+        }, 1000)
     }
 })

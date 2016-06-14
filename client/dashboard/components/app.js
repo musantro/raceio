@@ -1,68 +1,81 @@
-Template.tests.helpers({
-    tests: function() {
-    return Tests.find({})
-    }
+Template.upload.onCreated(function() {
+    this.currentFile = new ReactiveVar(false);
 });
 
-Template.dashboard.helpers({
-    numTests: function() {
-        return Tests.find().count()
-    }
-});
-
-Template.testSingle.onCreated(function() {
+Template.tests.onCreated(function() {
     var self = this;
     self.autorun(function() {
         self.subscribe('tests');
     });
 });
 
-// the graph it will display once rendered
+// UPLOAD FILE AND PARSE IT
+Template.upload.events({
+    'change [name="uploadCSV"]': function(event, template) {
+        if (event.currentTarget.files && event.currentTarget.files[0]) {
+            // We upload only one file, in case
+            // there was multiple files selected
+            var file = event.currentTarget.files[0];
+            if (file) {
+                var uploadInstance = Csvs.insert({
+                    file: file,
+                    streams: 'dynamic',
+                    chunkSize: 'dynamic'
+                }, false);
 
-Template.testSingle.rendered = function () {
-        var yData = testObject.sensor[13].values;
-        var xData = testObject.sensor[0].values;
+                uploadInstance.on('start', function() {
+                    template.currentFile.set(this);
+                });
 
-    var returnobject = {
-        chart: {
-            // type: 'area',
-            zoomType: 'x'
-        },
-        title: {
-            text: 'Time vs RPM',
-        },
-        xAxis: {
-            title: {
-                text: 'Time'
-            },
-            labels: {
-                formatter: function() {
-                    return this.value / testObject.meta["Sample Rate"];
-                }
+                uploadInstance.on('error', function(error) {
+                    console.error(error);
+                    template.currentFile.set(false);
+                });
+
+                uploadInstance.on('end', function(error, fileObj) {
+                    if (error) {
+                        Materialize.toast('Error during upload: ' + error.reason, 4000)
+                    } else {
+                        Materialize.toast('File "' + fileObj.name + '" successfully uploaded', 4000)
+                    }
+                    template.currentFile.set(false);
+                    Meteor.call("bench", fileObj, function(error, result) {
+                        if (error) {
+                            console.log("error", error);
+                        }
+                        if (result) {
+                            Materialize.toast("Bench done", 4000);
+                        }
+                    });
+                });
+
+                uploadInstance.start();
             }
-        },
-        yAxis: {
-            title: {
-                text: 'RPM'
-            },
-        },
-        tooltip: {
-            crosshairs: [true],
-            formatter: function() {
-                return Math.round(this.y) + " " + this.series.name
-            }
-        },
-        series: [{
-            name: 'RPM',
-            data: yData
-        }],
+        }
+    }
+});
 
-    }; //return object
+// Esto establece si se está subiendo algo o no
+Template.upload.helpers({
+    currentFile: function() {
+        return Template.instance().currentFile.get();
+    }
+});
 
-    jQuery('#graph-area').highcharts(returnobject);
 
-};
+// Esto es para sacar los key-values
+Template.registerHelper("objectToPairs", function(object) {
+    return _.map(object, function(value, key) {
+        return {
+            key: key,
+            value: value
+        };
+    });
+});
 
-Template.upload.onCreated(function() {
-    this.currentFile = new ReactiveVar(false);
+// test
+Template.tests.helpers({
+    tests: function() {
+    return Tests.find({})
+    }
 });
