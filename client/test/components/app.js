@@ -1,6 +1,6 @@
 Template.test.rendered = function () {
-        var yData = testObject.sensor[13].values;
-        var xData = testObject.sensor[0].values;
+        var yData = testData.sensor[13].values;
+        var xData = testData.sensor[0].values;
 
     var returnobject = {
         chart: {
@@ -16,7 +16,7 @@ Template.test.rendered = function () {
             },
             labels: {
                 formatter: function() {
-                    return this.value / testObject.meta["Sample Rate"];
+                    return this.value / testData.meta["Sample Rate"];
                 }
             }
         },

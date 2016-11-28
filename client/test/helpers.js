@@ -19,3 +19,10 @@ Template.test.onCreated(function() {
         self.subscribe('tests');
     });
 });
+
+Template.test.onCreated(function() {
+    var self = this;
+    self.autorun(function() {
+        self.subscribe('sensors');
+    });
+});

@@ -21,7 +21,7 @@ Template.test.events({
                     },
                     labels: {
                         formatter: function() {
-                            return this.value / testObject.meta["Sample Rate"];
+                            return this.value / testData.meta["Sample Rate"];
                         }
                     }
                 },
@@ -41,13 +41,13 @@ Template.test.events({
                 if (i == 0) {
                     returnobject.yAxis.push({
                         title: {
-                            text: testObject.sensor[sensors[i]].customName,
+                            text: testData.sensor[sensors[i]].customName,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
                         },
                         labels: {
-                            format: '{value} ' + testObject.sensor[sensors[i]].units,
+                            format: '{value} ' + testData.sensor[sensors[i]].units,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
@@ -56,13 +56,13 @@ Template.test.events({
                 } else {
                     returnobject.yAxis.push({
                         title: {
-                            text: testObject.sensor[sensors[i]].customName,
+                            text: testData.sensor[sensors[i]].customName,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
                         },
                         labels: {
-                            format: '{value} ' + testObject.sensor[sensors[i]].units,
+                            format: '{value} ' + testData.sensor[sensors[i]].units,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
@@ -71,8 +71,8 @@ Template.test.events({
                     })
                 }
                 returnobject.series.push({
-                    name: testObject.sensor[sensors[i]].customName,
-                    data: testObject.sensor[sensors[i]].values,
+                    name: testData.sensor[sensors[i]].customName,
+                    data: testData.sensor[sensors[i]].values,
                     yAxis: i
                 })
             }
