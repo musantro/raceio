@@ -144,3 +144,7 @@ Meteor.methods({
         }, 1000)
     }
 })
+
+Meteor.publish('Test', function (id){
+  return Sensors.find({"fromTest":id});
+});
