@@ -1,6 +1,9 @@
 Template.test.rendered = function () {
-        var yData = testData.sensor[13].values;
-        var xData = testData.sensor[0].values;
+        console.log()
+        const test = Sensors.findOne({"name":"RPM"})
+        const data = test.values[0][0];
+        var yData = Object.values(data).map(function(k){return Number(k)})
+        var xData = Object.keys(data).map(function(k){return Number(k)});
 
     var returnobject = {
         chart: {
@@ -16,7 +19,7 @@ Template.test.rendered = function () {
             },
             labels: {
                 formatter: function() {
-                    return this.value / testData.meta["Sample Rate"];
+                    return this.value / test.sampleRate
                 }
             }
         },

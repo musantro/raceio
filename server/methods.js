@@ -73,7 +73,8 @@ Meteor.methods({
                                                     "name": arr[0][i],
                                                     "customName": arr[1][i],
                                                     "units": arr[2][i],
-                                                    "sensorId": arr[3][i]
+                                                    "sensorId": arr[3][i],
+                                                    "sampleRate":sampleRate
                                                 })
                                             }
 
@@ -147,4 +148,8 @@ Meteor.methods({
 
 Meteor.publish('Test', function (id){
   return Sensors.find({"fromTest":id});
+});
+
+Meteor.publish('Meta', function (id){
+  return Tests.find({"_id":id});
 });
