@@ -1,7 +1,7 @@
 Template.test.rendered = function () {
         console.log()
         const test = Sensors.findOne({"name":"RPM"})
-        const data = test.values[0][0];
+        const data = test.values[0][1];
         var yData = Object.values(data).map(function(k){return Number(k)})
         var xData = Object.keys(data).map(function(k){return Number(k)});
 

@@ -7,9 +7,8 @@ Template.test.events({
     "change #select-sensors": function(event, template) {
         sensors = template.$('#select-sensors').val()
         plotIt(sensors);
-
         function plotIt(sensors) {
-
+          const test = Sensors.findOne({})
             var returnobject = {
                 chart: {
                     zoomType: 'x'
@@ -21,7 +20,7 @@ Template.test.events({
                     },
                     labels: {
                         formatter: function() {
-                            return this.value / testData.meta["Sample Rate"];
+                            return this.value / test.sampleRate
                         }
                     }
                 },
@@ -38,16 +37,17 @@ Template.test.events({
             };
 
             for (var i = 0; i < sensors.length; i++) {
+              var sensor = Sensors.findOne({"name":sensors[i]})
                 if (i == 0) {
                     returnobject.yAxis.push({
                         title: {
-                            text: testData.sensor[sensors[i]].customName,
+                            text: sensors[i],
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
                         },
                         labels: {
-                            format: '{value} ' + testData.sensor[sensors[i]].units,
+                            format: '{value} ' + sensor.units,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
@@ -56,13 +56,13 @@ Template.test.events({
                 } else {
                     returnobject.yAxis.push({
                         title: {
-                            text: testData.sensor[sensors[i]].customName,
+                            text: sensor.customName,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
                         },
                         labels: {
-                            format: '{value} ' + testData.sensor[sensors[i]].units,
+                            format: '{value} ' + sensor.units,
                             style: {
                                 color: Highcharts.getOptions().colors[i]
                             }
@@ -71,8 +71,8 @@ Template.test.events({
                     })
                 }
                 returnobject.series.push({
-                    name: testData.sensor[sensors[i]].customName,
-                    data: testData.sensor[sensors[i]].values,
+                    name: sensor.customName,
+                    data: Object.values(sensor.values[0][1]).map(function(k){return Number(k)}),
                     yAxis: i
                 })
             }
