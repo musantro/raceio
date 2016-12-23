@@ -29,7 +29,7 @@ Template.test.events({
                 tooltip: {
                     crosshairs: [true],
                     formatter: function() {
-                        return Math.round(this.y) + " " + this.series.name
+                        return this.y + " " + sensor.units
                     }
                 },
                 series: []
