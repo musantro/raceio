@@ -1,13 +1,18 @@
 Template.test.rendered = function () {
         console.log()
-        const test = Sensors.findOne({"name":"RPM"})
-        const data = test.values[0][1];
-        var yData = Object.values(data).map(function(k){return Number(k)})
-        var xData = Object.keys(data).map(function(k){return Number(k)});
+        const test = Sensors.findOne({"name":"RPM"});
+        const data = test.values;
+        // Sólo coge el minuto 0 segundo 1...
+        let yData = []
+
+
+        createData(data,yData)
+
+        yData = yData.map(Number);
+        console.log(yData)
 
     var returnobject = {
         chart: {
-            // type: 'area',
             zoomType: 'x'
         },
         title: {
@@ -39,7 +44,7 @@ Template.test.rendered = function () {
             data: yData
         }],
 
-    }; //return object
+    };
 
     jQuery('#graph-area').highcharts(returnobject);
 

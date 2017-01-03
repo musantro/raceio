@@ -29,7 +29,7 @@ Template.test.events({
                 tooltip: {
                     crosshairs: [true],
                     formatter: function() {
-                        return this.y + " " + sensor.units
+                        return this.y
                     }
                 },
                 series: []
@@ -70,13 +70,16 @@ Template.test.events({
                         opposite: true
                     })
                 }
+                createData(sensor.values,data = []);
+                data = data.map(Number);
+
                 returnobject.series.push({
                     name: sensor.customName,
-                    data: Object.values(sensor.values[0][1]).map(function(k){return Number(k)}),
+                    // Sólo coge el minuto 0 segundo 1...
+                    data: data,
                     yAxis: i
                 })
             }
-            //return object
 
             jQuery('#graph-area').highcharts(returnobject);
         }

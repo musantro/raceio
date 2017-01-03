@@ -11,3 +11,14 @@ Template.header.onRendered(function() {
     }
   );
 })
+
+// Function createData converts time Series object to array for Highcharts
+createData = function(obj, arr){
+  for (var i in obj) {
+    if (typeof obj[i] === 'object'){
+      createData(obj[i],arr)
+    } else {
+      arr.push(obj[i])
+    }
+  }
+}
