@@ -1,4 +1,3 @@
-
 Template.test.onRendered(function() {
     $('select').material_select();
 })
@@ -7,13 +6,13 @@ Template.test.events({
     "change #select-sensors": function(event, template) {
         sensors = template.$('#select-sensors').val()
         plotIt(sensors);
+
         function plotIt(sensors) {
-          const test = Sensors.findOne({})
+            const test = Sensors.findOne({})
             var returnobject = {
                 chart: {
                     zoomType: 'x'
                 },
-
                 xAxis: {
                     title: {
                         text: 'Time'
@@ -28,16 +27,16 @@ Template.test.events({
 
                 tooltip: {
                     crosshairs: [true],
-                    formatter: function() {
-                        return this.y
-                    }
+                    shared: true
                 },
                 series: []
 
             };
 
             for (var i = 0; i < sensors.length; i++) {
-              var sensor = Sensors.findOne({"name":sensors[i]})
+                var sensor = Sensors.findOne({
+                    "name": sensors[i]
+                })
                 if (i == 0) {
                     returnobject.yAxis.push({
                         title: {
@@ -70,14 +69,16 @@ Template.test.events({
                         opposite: true
                     })
                 }
-                createData(sensor.values,data = []);
+                createData(sensor.values, data = []);
                 data = data.map(Number);
 
                 returnobject.series.push({
                     name: sensor.customName,
-                    // Sólo coge el minuto 0 segundo 1...
                     data: data,
-                    yAxis: i
+                    yAxis: i,
+                    tooltip: {
+                      valueSuffix: ` ${sensor.units}`
+                    }
                 })
             }
 
