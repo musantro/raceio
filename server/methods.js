@@ -94,10 +94,11 @@ Meteor.methods({
                                     }
                                 }
                                 for (var i = 0; i < row.length; i++) {
-                                    // create timestamp for the property of each value (seconds)
-                                    var timestamp = Math.floor(Number(row[0]) % 1 * 1000); // this is HARDCODED
+                                    // create timestamp for the property of each value (milliseconds)
+                                    var timestamp = Math.round(Number(row[0]) % 1 * 1000); // this is HARDCODED
                                     // store values in each one
                                     tempValues[i][timestamp] = row[i];
+                                    // (i == row.length -1) ? console.log(`timestamp: ${timestamp}ms`) : "";
                                 }
                                 countRow++;
                                 if (countRow == sampleRate) {
