@@ -39,7 +39,7 @@ Meteor.methods({
                                     console.log("Detected empty line on #" + rows);
 
                                     switch (emptyRows) {
-                                        // SAVE FIRST CSV SECTION
+                                        // SAVE FIRST CSV SECTION - Metadata
                                         case 1:
                                             var metaObj = {};
                                             for (var i = 2; i < arr.length; i++) {
@@ -63,7 +63,7 @@ Meteor.methods({
 
                                             break;
 
-                                            // SAVE SECOND CSV SECTION
+                                            // SAVE SECOND CSV SECTION - Names
                                         case 2:
                                             sensorNames = arr[0]
                                             for (var i = 0; i < arr[0].length; i++) {
@@ -74,7 +74,7 @@ Meteor.methods({
                                                     "customName": arr[1][i],
                                                     "units": arr[2][i],
                                                     "sensorId": arr[3][i],
-                                                    "sampleRate":sampleRate
+                                                    "sampleRate": sampleRate
                                                 })
                                             }
 
@@ -85,15 +85,18 @@ Meteor.methods({
                                     tempArr.push(row);
                                 };
                             } else {
-                                // SAVE THIRD CSV SECTION
+                                // SAVE THIRD CSV SECTION - Sensor Values
                                 if (tempValues.length == 0) {
+                                    // if temporary Array to store values does not exist, then create it
                                     tempValues = new Array(row.length);
                                     for (var i = 0; i < row.length; i++) {
                                         tempValues[i] = {};
                                     }
                                 }
                                 for (var i = 0; i < row.length; i++) {
-                                    var timestamp = Math.floor(Number(row[0]) % 1 * 1000);
+                                    // create timestamp for the property of each value (seconds)
+                                    var timestamp = Math.floor(Number(row[0]) % 1 * 1000); // this is HARDCODED
+                                    // store values in each one
                                     tempValues[i][timestamp] = row[i];
                                 }
                                 countRow++;
@@ -146,10 +149,14 @@ Meteor.methods({
     }
 })
 
-Meteor.publish('Test', function (id){
-  return Sensors.find({"fromTest":id});
+Meteor.publish('Test', function(id) {
+    return Sensors.find({
+        "fromTest": id
+    });
 });
 
-Meteor.publish('Meta', function (id){
-  return Tests.find({"_id":id});
+Meteor.publish('Meta', function(id) {
+    return Tests.find({
+        "_id": id
+    });
 });
