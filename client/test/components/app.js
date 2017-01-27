@@ -1,6 +1,6 @@
 Template.test.rendered = function () {
         console.log()
-        const test = Sensors.findOne({"name":"RPM"});
+        const test = Sensors.findOne({"name":"Time"});
         const data = test.values;
         // Sólo coge el minuto 0 segundo 1...
         let yData = []
@@ -16,7 +16,7 @@ Template.test.rendered = function () {
             zoomType: 'x'
         },
         title: {
-            text: 'Time vs RPM',
+            text: `Time vs ${test.name}`,
         },
         xAxis: {
             title: {
@@ -30,18 +30,18 @@ Template.test.rendered = function () {
         },
         yAxis: {
             title: {
-                text: 'RPM'
+                text: `${test.name}`
             },
         },
         tooltip: {
-            crosshairs: [true],
-            formatter: function() {
-                return Math.round(this.y) + " " + this.series.name
-            }
+            crosshairs: [true, true],
         },
         series: [{
-            name: 'RPM',
-            data: yData
+            name: `${test.name}`,
+            data: yData,
+            tooltip: {
+              valueSuffix: ` ${test.units}`
+            }
         }],
 
     };
