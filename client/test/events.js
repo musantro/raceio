@@ -26,7 +26,7 @@ Template.test.events({
                 yAxis: [],
 
                 tooltip: {
-                    crosshairs: [true],
+                    crosshairs: [true,true],
                     shared: true
                 },
                 series: []
