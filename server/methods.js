@@ -1,5 +1,9 @@
 Meteor.methods({
 
+// Right now this function supposes that CSV file has not resets in Time column.
+// This is not always true, as Race Studio has Beacon Markers.
+// Upcoming: Taking into account every option RaceStudio has with Beacon Markers
+// and implement it for easier UX.
     'bench': function(file) {
         var csv = require('fast-csv');
         var fs = require('fs');
@@ -98,7 +102,6 @@ Meteor.methods({
                                     var timestamp = Math.round(Number(row[0]) % 1 * 1000); // this is HARDCODED
                                     // store values in each one
                                     tempValues[i][timestamp] = row[i];
-                                    // (i == row.length -1) ? console.log(`timestamp: ${timestamp}ms`) : "";
                                 }
                                 countRow++;
                                 if (countRow == sampleRate) {
@@ -110,8 +113,8 @@ Meteor.methods({
                                             "fromTest": file._id,
                                             "name": sensorNames[i]
                                         }, {
-                                            $set: {
-                                                ["values." + Math.floor(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
+                                            $push: {
+                                                ["values." + Math.round(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
                                             }
                                         });
                                     }
@@ -139,7 +142,7 @@ Meteor.methods({
                                 "name": sensorNames[i]
                             }, {
                                 $set: {
-                                    ["values." + Math.floor(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
+                                    ["values." + Math.round(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
                                 }
                             });
                         }
