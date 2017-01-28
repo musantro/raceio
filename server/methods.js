@@ -33,7 +33,7 @@ Meteor.methods({
                     var row;
                     while (null !== (row = stream.read())) {
 
-                        if (rows <= 1500) { // This is a bug, only reads 1500
+                        if (rows <= 700) { // This is a bug, only reads 1500
                             if (emptyRows < 2) {
                                 if (row.length == 0) {
                                     var arr = tempArr;
