@@ -16,7 +16,7 @@ Template.test.rendered = function () {
             zoomType: 'x'
         },
         title: {
-            text: `Time vs ${test.name}`,
+            text: ``,
         },
         xAxis: {
             title: {

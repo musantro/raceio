@@ -13,6 +13,9 @@ Template.test.events({
                 chart: {
                     zoomType: 'x'
                 },
+                title: {
+                    text: ``,
+                },
                 xAxis: {
                     title: {
                         text: 'Time'

@@ -4,6 +4,7 @@ Meteor.methods({
 // This is not always true, as Race Studio has Beacon Markers.
 // Upcoming: Taking into account every option RaceStudio has with Beacon Markers
 // and implement it for easier UX.
+
     'bench': function(file) {
         var csv = require('fast-csv');
         var fs = require('fs');
