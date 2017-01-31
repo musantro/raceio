@@ -151,7 +151,11 @@ Meteor.methods({
                     console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
                 }))
         }, 1000)
+    },
+    'removeCSV': function(id){
+      Csvs.remove(id);
     }
+
 })
 
 Meteor.publish('Test', function(id) {
