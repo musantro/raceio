@@ -1,5 +1,4 @@
 Template.test.rendered = function () {
-        console.log()
         const test = Sensors.findOne({"name":"Time"});
         const data = test.values;
         // Sólo coge el minuto 0 segundo 1...
@@ -9,7 +8,6 @@ Template.test.rendered = function () {
         createData(data,yData)
 
         yData = yData.map(Number);
-        console.log(yData)
 
     var returnobject = {
         chart: {
