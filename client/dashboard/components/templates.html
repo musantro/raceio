@@ -42,8 +42,8 @@
                   <tr>
                       <th data-field="id">Name</th>
                       <th data-field="date">Date</th>
-                      <th data-field="time">Time</th>
-                      <th data-field="driver">Driver</th>
+                      <th class="hide-on-med-and-down" data-field="time">Time</th>
+                      <th class="hide-on-med-and-down" data-field="driver">Driver</th>
                       <th data-field="buttons"></th>
                   </tr>
                 </thead>
@@ -76,8 +76,8 @@
       <tr>
         <td>{{desc}}</td>
         <td>{{date}}</td>
-        <td>{{time}}</td>
-        <td>{{user}}</td>
+        <td class="hide-on-med-and-down">{{time}}</td>
+        <td class="hide-on-med-and-down">{{user}}</td>
         <td>
           <a href="/test/{{id}}"><i class="material-icons left tiny">equalizer</i></a>
           <a href="#"><i class="material-icons left tiny green-text">mode_edit</i></a>
