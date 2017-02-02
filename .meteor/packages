@@ -28,3 +28,4 @@ standard-minifier-css
 standard-minifier-js
 aldeed:simple-schema
 ostrio:files
+webtempest:animate
