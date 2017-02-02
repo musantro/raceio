@@ -9,16 +9,12 @@
 <template name="upload">
     {{#unless currentFile}}
     <div class="fixed-action-btn click-to-toggle" style="bottom:45px; right:24px;">
-      <form action="#">
-          <div class="file-field input-field">
-              <div class="btn-floating btn-large red">
+      <div class="btn-floating btn-large red waves-effect waves-light">
+          <div class="file-field">
                 <i class="large material-icons">publish</i>
                   <input type="file" id="csv-file" name="uploadCSV" />
               </div>
           </div>
-      </form>
-
-        <!-- <a class="btn-floating btn-large red"><i class="large material-icons">publish</i></a> -->
     </div>
     {{else}}
     <p>Uploading files <b>{{currentFile.file.name}}</b></p>
