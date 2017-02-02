@@ -3,7 +3,9 @@
         {{> header}}
     </header>
     <main>
+      {{#transition wrap="true" in="fadeIn:200" out="fadeOut:200"}}
         {{> yield}}
+      {{/transition}}
     </main>
     <footer>
         {{> footer}}
@@ -14,6 +16,8 @@
         {{> header}}
     </header>
     <main>
+      {{#transition wrap="true" in="fadeIn:200" out="fadeOut:200"}}
         {{> yield}}
+      {{/transition}}
     </main>
 </template>

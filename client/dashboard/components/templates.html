@@ -48,7 +48,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {{#each tests}} {{> cardtest date = meta.Date time = meta.Time desc=meta.Comment user=meta.User id = _id}} {{/each}}
+                  {{#transition in="fadeInUp" out="fadeOutDown"}}
+                  {{#each tests}}
+                    {{> cardtest date = meta.Date time = meta.Time desc=meta.Comment user=meta.User id = _id}}
+                  {{/each}}
+                  {{/transition}}
                 </tbody>
               </table>
             </div>
