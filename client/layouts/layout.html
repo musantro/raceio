@@ -1,4 +1,10 @@
-<template name="mainLayout">
+<template name="layout">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <title>Race.io - Easy data visualization</title>
+  </head>
     <header>
         {{> header}}
     </header>
@@ -10,14 +16,4 @@
     <footer>
         {{> footer}}
     </footer>
-</template>
-<template name="layout">
-    <header>
-        {{> header}}
-    </header>
-    <main>
-      {{#transition in="fadeIn:200" out="fadeOut:200"}}
-        {{> yield}}
-      {{/transition}}
-    </main>
 </template>
