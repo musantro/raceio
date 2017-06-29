@@ -39,12 +39,12 @@ Template.upload.events({
                         Materialize.toast('File "' + fileObj.name + '" successfully uploaded', 4000)
                     }
                     template.currentFile.set(false);
-                    Meteor.call("bench", fileObj, function(error, result) {
+                    Meteor.call("storeTest", fileObj, function(error, result) {
                         if (error) {
                             console.log("error", error);
                         }
                         if (result) {
-                            Materialize.toast("Bench done", 4000);
+                            Materialize.toast("storeTest done", 4000);
                         }
                     });
                 });
