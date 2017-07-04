@@ -9,12 +9,12 @@ Meteor.methods({
         var csv = require('fast-csv');
         var fs = require('fs');
 
+        var bulk = Sensors.rawCollection().initializeOrderedBulkOp();
         var now = Date.now();
         var rows = 0
         var emptyRows = 0
         var arrMeta = [];
         var arrSensors = [];
-        var stack = [];
         var countRow = 0;
         var sensorNames;
         var currentStack = [];
@@ -65,16 +65,15 @@ Meteor.methods({
 
                             }
                             for (var i = 0; i < row.length; i++) {
-                              var timestamp = Math.round(Number(row[0]) % 1 * 1000);
-                              currentStack[i][timestamp] = row[i];
+                                var timestamp = Math.round(Number(row[0]) % 1 * 1000);
+                                currentStack[i][timestamp] = row[i];
                             }
 
                             countRow++;
                             if (countRow == sampleRate) {
-                              countRow = 0;
-                              stack.push(currentStack)
-                              store.values(stack[stack.length-1], sensorNames);
-                              currentStack = []
+                                countRow = 0;
+                                store.values(currentStack, sensorNames);
+                                currentStack = []
                             }
                         }
                     }
@@ -84,7 +83,12 @@ Meteor.methods({
                 console.log(err)
             })
             .on('end', Meteor.bindEnvironment(function(count) {
+              store.values(currentStack, sensorNames);
+              currentStack = []
 
+              bulk.execute(function(error) {
+                  return error;
+              })
                 console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
             }))
 
@@ -128,16 +132,15 @@ Meteor.methods({
             },
             values: function(arr, sensorNames) {
                 for (var i = 0; i < arr.length; i++) {
-                    Sensors.rawCollection().updateOne({
+                    bulk.find({
                         "fromTest": file._id,
                         "name": sensorNames[i]
-                    }, {
+                    }).update({
                         $set: {
                             ["values." + Math.round(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
                         }
                     });
                 }
-                stack.
                 return;
             }
         }
