@@ -1,4 +1,4 @@
-Template.test.rendered = function () {
+Template.charts.rendered = function () {
         const test = Sensors.findOne({"name":"Time"});
         const data = test.values;
         // Sólo coge el minuto 0 segundo 1...

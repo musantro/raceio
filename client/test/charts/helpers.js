@@ -1,5 +1,5 @@
 // Esto es para preparar el dropdown de sensores
-Template.test.helpers({
+Template.charts.helpers({
     sensors: function() {
       return Sensors.find()
     },

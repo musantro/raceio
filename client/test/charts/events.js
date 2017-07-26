@@ -1,8 +1,8 @@
-Template.test.onRendered(function() {
+Template.charts.onRendered(function() {
     $('select').material_select();
 })
 
-Template.test.events({
+Template.charts.events({
     "change #select-sensors": function(event, template) {
         sensors = template.$('#select-sensors').val()
         plotIt(sensors);
