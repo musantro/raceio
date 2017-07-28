@@ -1,10 +1,27 @@
 <template name="loading">
   <main>
     <div class="container">
-      <p class="center-align">Loading...</p>
-      <div class="valign-wrapper" style="height:100%">
-        <div class="progress valign">
-          <div class="indeterminate"></div>
+      <div class="valign-wrapper" style="height:100vh">
+        <div class="row" style="margin:0 auto">
+          <div class="col s-12">
+            <div class="preloader-wrapper big active" style="margin:auto; position: absolute; top: 0; left: 0; right: 0; bottom: 0">
+              <div class="spinner-layer spinner-red-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="col s-12 center-align">
+            <p>Warming up engines...</p>
+          </div>
         </div>
       </div>
     </div>
