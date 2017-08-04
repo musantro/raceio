@@ -164,3 +164,7 @@ Meteor.publish('Meta', function(id) {
         "_id": id
     });
 });
+
+Meteor.publish('Tests', function() {
+  return Tests.find({});
+});

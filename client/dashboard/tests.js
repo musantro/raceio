@@ -2,13 +2,6 @@ Template.upload.onCreated(function() {
     this.currentFile = new ReactiveVar(false);
 });
 
-Template.tests.onCreated(function() {
-    var self = this;
-    self.autorun(function() {
-        self.subscribe('tests');
-    });
-});
-
 // UPLOAD FILE AND PARSE IT
 Template.upload.events({
     'change [name="uploadCSV"]': function(event, template) {
@@ -73,12 +66,6 @@ Template.registerHelper("objectToPairs", function(object) {
     });
 });
 
-// test
-Template.tests.helpers({
-    tests: function() {
-        return Tests.find({})
-    }
-});
 
 Template.cardtest.events({
     'click .delete': function() {

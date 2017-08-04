@@ -11,3 +11,11 @@ Template.dashboard.helpers({
     }
 
 });
+
+
+// test
+Template.tests.helpers({
+    tests: function() {
+        return Tests.find({})
+    }
+});

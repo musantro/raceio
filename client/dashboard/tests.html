@@ -22,7 +22,6 @@
 <!-- TESTS -->
 <template name="tests">
     <div class="container">
-        {{#if Template.subscriptionsReady}}
         {{> upload}}
         <div class="section">
             <div class="row">
@@ -37,7 +36,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {{#transition in="fadeInUp" out="fadeOutDown"}}
+                  {{#transition out="fadeOutLeft"}}
                   {{#each tests}}
                     {{> cardtest date = meta.Date time = meta.Time desc=meta.Comment user=meta.User id = _id}}
                   {{/each}}
@@ -46,21 +45,6 @@
               </table>
             </div>
         </div>
-        {{else}}
-        <div class="preloader-wrapper big active">
-            <div class="spinner-layer spinner-blue">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>
-        {{/if}}
     </div>
 </template>
 
