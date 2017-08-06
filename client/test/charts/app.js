@@ -1,49 +1,56 @@
-Template.charts.rendered = function () {
-        const test = Sensors.findOne({"name":"Time"});
-        const data = test.values;
-        // Sólo coge el minuto 0 segundo 1...
-        let yData = []
+Template.charts.rendered = function() {
+  const test = Sensors.findOne({
+    "name": "Time"
+  });
+  const data = test.values;
+  // Sólo coge el minuto 0 segundo 1...
+  let yData = []
 
 
-        createData(data,yData)
+  createData(data, yData)
 
-        yData = yData.map(Number);
+  yData = yData.map(Number);
 
-    var returnobject = {
-        chart: {
-            zoomType: 'x'
-        },
-        title: {
-            text: ``,
-        },
-        xAxis: {
-            title: {
-                text: 'Time'
-            },
-            labels: {
-                formatter: function() {
-                    return this.value / test.sampleRate
-                }
-            }
-        },
-        yAxis: {
-            title: {
-                text: `${test.name}`
-            },
-        },
-        tooltip: {
-            crosshairs: [true, true],
-        },
-        series: [{
-            name: `${test.name}`,
-            data: yData,
-            tooltip: {
-              valueSuffix: ` ${test.units}`
-            }
-        }],
+  var returnobject = {
+    chart: {
+      zoomType: 'x'
+    },
+    plotOptions: {
+      series: {
+        animation: false
+      }
+    },
+    title: {
+      text: ``,
+    },
+    xAxis: {
+      title: {
+        text: 'Time'
+      },
+      labels: {
+        formatter: function() {
+          return this.value / test.sampleRate
+        }
+      }
+    },
+    yAxis: {
+      title: {
+        text: `${test.name}`
+      },
+    },
+    tooltip: {
+      crosshairs: [true, true],
+    },
+    series: [{
+      name: `${test.name}`,
+      data: yData,
+      tooltip: {
+        valueSuffix: ` ${test.units}`
+      }
+    }],
 
-    };
+  };
 
-    jQuery('#graph-area').highcharts(returnobject);
+  jQuery('#graph-area').highcharts(returnobject);
 
 };

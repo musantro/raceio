@@ -1,7 +1,11 @@
 Template.ellipse.rendered = function() {
 
-  const latAcc = Sensors.findOne({"name":"Lateral_acc"});
-  const longAcc= Sensors.findOne({"name":"Longitudinal_a"})
+  const latAcc = Sensors.findOne({
+    "name": "Lateral_acc"
+  });
+  const longAcc = Sensors.findOne({
+    "name": "Longitudinal_a"
+  })
   // const data = test.values;
   // Sólo coge el minuto 0 segundo 1...
   let latArr = [];
@@ -61,6 +65,7 @@ Template.ellipse.rendered = function() {
     },
     plotOptions: {
       scatter: {
+        animation: false,
         marker: {
           radius: 5,
           states: {

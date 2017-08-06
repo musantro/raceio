@@ -13,6 +13,11 @@ Template.charts.events({
                 chart: {
                     zoomType: 'x'
                 },
+                plotOptions: {
+                  series: {
+                    animation: false
+                  }
+                },
                 title: {
                     text: ``,
                 },
