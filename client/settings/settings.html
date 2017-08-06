@@ -12,15 +12,42 @@
         </select>
       </div>
     </div>
-    <h4>Define your sensors</h4>
+    <h4>Name your sensors</h4>
     <p>Assign them a friendly name</p>
     <div class="section">
       <div class="row">
-        <div class="input-field col s6">
-          <input value="Alvin" id="first_name2" type="text" class="validate">
-          <label class="active" for="first_name2">First Name</label>
-        </div>
-      </div>
+      {{#each labels}}
+          <div class="input-field col m3">
+            {{#autoForm id=makeUniqueID type="update" collection="Labels" doc=this autosave=true}}
+              {{> afFormGroup name="friendlyName" label=name label-class="active"}}
+            {{/autoForm}}
+          </div>
+      {{/each}}
+    </div>
+      <!-- <div class="row">
+          <table class="table table-bordered table-condensed">
+            <thead>
+              <tr>
+                <td style="width: 85px">Items</td>
+                <td>Tags</td>
+                <td style="width: 250px">Tags Edit</td>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each labels}}
+                <tr>
+                  <td>{{this.name}}</td>
+                  <td>{{this.friendlyName}}</td>
+                  <td>
+                    {{#autoForm id=makeUniqueID type="update" collection="Labels" doc=this autosave=true}}
+                      {{> afFormGroup name="friendlyName" label=false}}
+                    {{/autoForm}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div> -->
     </div>
   </div>
 
