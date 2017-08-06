@@ -31,3 +31,5 @@ ostrio:files
 webtempest:animate
 shell-server
 # dynamic-import
+aldeed:collection2-core
+aldeed:autoform
