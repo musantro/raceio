@@ -1,54 +1,18 @@
 <template name="settings">
   <div class="container">
     <h2>Settings</h2>
-    <h4>Default Chart</h4>
-    <p>Pick the default sensors to plot in the Default Chart</p>
-    <div class="section">
-      <div class="input-field">
-        <select multiple>
-          <option value="id1">name</option>
-          <option value="id2">name2</option>
-          <option value="id3">name3</option>
-        </select>
-      </div>
-    </div>
     <h4>Name your sensors</h4>
     <p>Assign them a friendly name</p>
     <div class="section">
       <div class="row">
-      {{#each labels}}
+        {{#each labels}}
           <div class="input-field col m3">
             {{#autoForm id=makeUniqueID type="update" collection="Labels" doc=this autosave=true}}
               {{> afFormGroup name="friendlyName" label=name label-class="active"}}
             {{/autoForm}}
           </div>
-      {{/each}}
-    </div>
-      <!-- <div class="row">
-          <table class="table table-bordered table-condensed">
-            <thead>
-              <tr>
-                <td style="width: 85px">Items</td>
-                <td>Tags</td>
-                <td style="width: 250px">Tags Edit</td>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each labels}}
-                <tr>
-                  <td>{{this.name}}</td>
-                  <td>{{this.friendlyName}}</td>
-                  <td>
-                    {{#autoForm id=makeUniqueID type="update" collection="Labels" doc=this autosave=true}}
-                      {{> afFormGroup name="friendlyName" label=false}}
-                    {{/autoForm}}
-                  </td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        </div> -->
+        {{/each}}
+      </div>
     </div>
   </div>
-
 </template>
