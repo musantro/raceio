@@ -1,10 +1,5 @@
 Meteor.methods({
 
-  // Right now this function supposes that CSV file has not resets in Time column.
-  // This is not always true, as Race Studio has Beacon Markers.
-  // Upcoming: Taking into account every option Race Studio has with Beacon Markers
-  // and implement it for easier UX.
-
   'storeTest': function(file) {
     Tests.insert({
       _id: file._id
@@ -151,8 +146,6 @@ Meteor.methods({
             }
           }
         }
-        // console.log(`arr is ${arr.length} wide`)
-        // console.log(`tr is ${tr.length} wide`)
         for (var i = 1; i < sensorArr.length; i++) {
           bulk.insert({
             ...sensorArr[i],
