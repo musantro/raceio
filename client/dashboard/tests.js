@@ -69,14 +69,6 @@ Template.registerHelper("objectToPairs", function(object) {
 
 Template.cardtest.events({
     'click .delete': function() {
-        Tests.remove(this.id);
-        Sensors.find({
-            fromTest: this.id
-        }).forEach(function(doc) {
-            Sensors.remove({
-                _id: doc._id
-            });
-        });
-        Meteor.call("removeCSV", this.id);
+        Meteor.call("deleteTest", this.id);
     }
 })

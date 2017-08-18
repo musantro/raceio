@@ -160,10 +160,11 @@ Meteor.methods({
 
   },
 
-  'removeCSV': function(id) {
+  'deleteTest': function(id){
+    Tests.remove(id);
     Csvs.remove(id);
+    Sensors.remove({'fromTest': id});
   }
-
 })
 
 Meteor.publish('Test', function(id) {
