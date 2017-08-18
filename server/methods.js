@@ -1,41 +1,42 @@
 Meteor.methods({
 
-  'storeTest': function(file) {
+  'storeTest': function(file) {    // Creamos documento en la colección Tests para trabajar con la _id
     Tests.insert({
       _id: file._id
     });
 
+    // Inicializamos variables; activamos cronómetro con la variable start
     let start = Date.now(),
       lineNum = 0,
       emptyRows = 0,
       bufArr = [],
       sensorNames, freq, beaconMarkers;
 
+    // Inicializamos lap y nextSecond
     var lap = 1,
       nextSecond = 1;
 
-    console.log(`typeof nextSecond: ${typeof nextSecond}`);
-    console.log(`typeof lap: ${typeof lap}`);
-
+    // Creamos una cola de trabajo para el guardado en mongoDB
     var bulk = Sensors.rawCollection().initializeOrderedBulkOp();
 
+    // activamos paquetes npm: fast-csv, line-by-line
     var csv = require('fast-csv'),
       LineByLineReader = require('line-by-line'),
       lr = new LineByLineReader(file.path);
 
+      console.log(`New upload in progress... ${file._id}`);
+    // Si line-by-line da error, nos lo muestra
     lr.on('error', function(err) {
-      // 'err' contains error object
+      // 'err' contiene un objeto error
       console.error(`Error: ${err.reason}`)
     });
+
+    // esta función se ejecutará tantas veces como líneas se hagan
     lr.on('line', Meteor.bindEnvironment(function(line) {
       lineNum++;
-      // 'line' contains the current line without the trailing newline character.
-      if (lineNum % 1000 === 0) {
-        console.log(`${lineNum} rows readed`);
-      }
+      // 'line' contiene la línea actual leída sin el carácter de nueva linea \n
       if (line.length == 0) {
         emptyRows++
-        console.log(`Empty line at ${lineNum + 1}`)
         switch (emptyRows) {
           case 1:
             let arrMeta = bufArr;
@@ -107,7 +108,6 @@ Meteor.methods({
           beaconMarkers[i] = beaconMarkers[i] - beaconMarkers[i - 1]
         };
 
-        console.log(`Sample Rate: ${freq} Hz`)
         Tests.update({
           _id: file._id
         }, {
@@ -140,7 +140,7 @@ Meteor.methods({
             if (tr[j] === undefined) {
               tr[j] = [];
             }
-            tr[j][i-1] = {
+            tr[j][i - 1] = {
               "t": arr[i][0],
               "v": arr[i][j]
             }
@@ -160,10 +160,12 @@ Meteor.methods({
 
   },
 
-  'deleteTest': function(id){
+  'deleteTest': function(id) {
     Tests.remove(id);
     Csvs.remove(id);
-    Sensors.remove({'fromTest': id});
+    Sensors.remove({
+      'fromTest': id
+    });
   }
 })
 

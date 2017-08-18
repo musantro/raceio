@@ -1,4 +1,4 @@
 // Testing Mode activated!
-// Tests.remove({});
-// Csvs.remove({});
-// Sensors.remove({})
+Tests.remove({});
+Csvs.remove({});
+Sensors.remove({})
