@@ -33,3 +33,5 @@ shell-server
 # dynamic-import
 aldeed:collection2-core
 aldeed:autoform
+meteorhacks:aggregate
+underscore
