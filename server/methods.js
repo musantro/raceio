@@ -166,6 +166,21 @@ Meteor.methods({
     Sensors.remove({
       'fromTest': id
     });
+  },
+
+  'getEllipse': function(id) {
+    var lat = Sensors.aggregate(
+      {$match: {"fromTest": id, "name": "Lateral_acc"}},
+      {$group: {_id: null, v:{$push: "$data.v"}}},
+    );
+
+    var long = Sensors.aggregate(
+      {$match: {"fromTest": id, "name": "Longitudinal_a"}},
+      {$group: {_id: null, v:{$push: "$data.v"}}},
+    );
+
+    return _.zip(_.flatten(lat[0].v), _.flatten(long[0].v));
+    ;
   }
 })
 
