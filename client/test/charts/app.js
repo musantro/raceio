@@ -1,56 +1,15 @@
 Template.charts.rendered = function() {
-  const test = Sensors.findOne({
-    "name": "Time"
-  });
-  const data = test.values;
-  // Sólo coge el minuto 0 segundo 1...
-  let yData = []
 
+  const id = Router.current().params._id;
+  const sampleRate = Number(Tests.findOne(id).meta["Sample Rate"]);
+  let initialData = ["Brake_Press_af", "TPS", "Velocidad Delante"]
 
-  createData(data, yData)
-
-  yData = yData.map(Number);
-
-  var returnobject = {
-    chart: {
-      zoomType: 'x'
-    },
-    plotOptions: {
-      series: {
-        animation: false
-      }
-    },
-    title: {
-      text: ``,
-    },
-    xAxis: {
-      title: {
-        text: 'Time'
-      },
-      labels: {
-        formatter: function() {
-          return this.value / test.sampleRate
-        }
-      }
-    },
-    yAxis: {
-      title: {
-        text: `${test.name}`
-      },
-    },
-    tooltip: {
-      crosshairs: [true, true],
-    },
-    series: [{
-      name: `${test.name}`,
-      data: yData,
-      tooltip: {
-        valueSuffix: ` ${test.units}`
-      }
-    }],
-
-  };
-
-  jQuery('#graph-area').highcharts(returnobject);
+  Meteor.call('getData', id, initialData, function(error, result) {
+    if (error) {
+      console.error(error);
+    } else {
+      plotIt(result, initialData, sampleRate);
+    }
+  })
 
 };

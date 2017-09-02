@@ -14,8 +14,8 @@
               <div class="col m6">
                 <div class="input-field">
                   <select id="select-sensors" multiple>
-                    {{#each sensors}}
-                      <option value="{{id}}">{{name}}</option>
+                    {{#each item in sensors}}
+                      <option value="{{item}}">{{item}}</option>
                     {{/each}}
                   </select>
                 </div>

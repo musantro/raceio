@@ -1,168 +1,217 @@
 Meteor.methods({
 
-    // Right now this function supposes that CSV file has not resets in Time column.
-    // This is not always true, as Race Studio has Beacon Markers.
-    // Upcoming: Taking into account every option RaceStudio has with Beacon Markers
-    // and implement it for easier UX.
+  'storeTest': function(file) {    // Creamos documento en la colección Tests para trabajar con la _id
+    Tests.insert({
+      _id: file._id
+    });
 
-    'storeTest': function(file) {
-        var csv = require('fast-csv');
-        var fs = require('fs');
+    // Inicializamos variables; activamos cronómetro con la variable start
+    let start = Date.now(),
+      lineNum = 0,
+      emptyRows = 0,
+      bufArr = [],
+      sensorNames, freq, beaconMarkers;
 
-        var bulk = Sensors.rawCollection().initializeOrderedBulkOp();
-        var now = Date.now();
-        var rows = 0
-        var emptyRows = 0
-        var arrMeta = [];
-        var arrSensors = [];
-        var countRow = 0;
-        var sensorNames;
-        var currentStack = [];
+    // Inicializamos lap y nextSecond
+    var lap = 1,
+      nextSecond = 1;
 
-        Tests.insert({
-            _id: file._id
-        });
+    // Creamos una cola de trabajo para el guardado en mongoDB
+    var bulk = Sensors.rawCollection().initializeOrderedBulkOp();
 
-        var stream = fs.createReadStream(file.path)
-            .pipe(csv())
-            .on('readable', Meteor.bindEnvironment(function() {
-                rows++
-                if (rows % 1000 === 0) {
-                    console.log(rows + " readed")
-                }
-                var row;
+    // activamos paquetes npm: fast-csv, line-by-line
+    var csv = require('fast-csv'),
+      LineByLineReader = require('line-by-line'),
+      lr = new LineByLineReader(file.path);
 
-                while (null !== (row = stream.read())) {
-                    if (rows <= 750) {
-                        if (emptyRows < 2) {
-                            if (row.length == 0) {
-                                emptyRows++
-                                switch (emptyRows) {
-                                    case 1:
-                                        store.metadata(arrMeta);
-                                        arrMeta = null;
-                                        break;
+      console.log(`New upload in progress... ${file._id}`);
+    // Si line-by-line da error, nos lo muestra
+    lr.on('error', function(err) {
+      // 'err' contiene un objeto error
+      console.error(`Error: ${err.reason}`)
+    });
 
-                                    case 2:
-                                        sensorNames = store.sensors(arrSensors);
-                                        arrSensors = null;
-                                        break;
-                                }
-                            } else {
-                                if (emptyRows === 0) {
-                                    arrMeta.push(row);
-                                } else {
-                                    arrSensors.push(row);
-                                }
-                            }
-                        } else {
-                            // THIRD SECTION
-                            if (currentStack.length === 0) {
-                                currentStack = new Array(row.length);
-                                for (var i = 0; i < row.length; i++) {
-                                    currentStack[i] = {};
-                                }
-
-                            }
-                            for (var i = 0; i < row.length; i++) {
-                                var timestamp = Math.round(Number(row[0]) % 1 * 1000);
-                                currentStack[i][timestamp] = row[i];
-                            }
-
-                            countRow++;
-                            if (countRow == sampleRate) {
-                                countRow = 0;
-                                store.values(currentStack, sensorNames);
-                                currentStack = []
-                            }
-                        }
-                    }
-                }
-            }))
-            .on('error', function(err) {
-                console.log(err)
-            })
-            .on('end', Meteor.bindEnvironment(function(count) {
-              store.values(currentStack, sensorNames);
-              currentStack = []
-
-              bulk.execute(function(error) {
-                  return error;
-              })
-                console.log('parsed ' + count + ' rows in ' + (Date.now() - now) / 1000 + ' s');
-            }))
-
-        var store = {
-            metadata: function(arr) {
-                var metaObj = {};
-                for (var i = 2; i < arr.length; i++) {
-                    key = arr[i].shift();
-                    if (arr[i].length <= 1) {
-                        metaObj[key] = arr[i][0]
-                    } else {
-                        metaObj[key] = arr[i]
-                    }
-                };
-
-                sampleRate = Number(metaObj["Sample Rate"])
-                console.log(sampleRate + " Hz")
-                Tests.update({
-                    _id: file._id
-                }, {
-                    $set: {
-                        "meta": metaObj
-                    }
-                });
-                return;
-            },
-            sensors: function(arr) {
-                sensorNames = arr[0]
-                for (var i = 0; i < arr[0].length; i++) {
-                    // console.log(i,"arr[0] = ",arr[0]);
-                    Sensors.insert({
-                        "fromTest": file._id,
-                        "name": arr[0][i],
-                        "customName": arr[1][i],
-                        "units": arr[2][i],
-                        "sensorId": arr[3][i],
-                        "sampleRate": sampleRate
-                    })
-                }
-                return sensorNames;
-            },
-            values: function(arr, sensorNames) {
-                for (var i = 0; i < arr.length; i++) {
-                    bulk.find({
-                        "fromTest": file._id,
-                        "name": sensorNames[i]
-                    }).update({
-                        $set: {
-                            ["values." + Math.round(arr[0][0] / 60) + "." + Math.round(arr[0][0])]: arr[i]
-                        }
-                    });
-                }
-                return;
-            }
+    // esta función se ejecutará tantas veces como líneas se hagan
+    lr.on('line', Meteor.bindEnvironment(function(line) {
+      lineNum++;
+      // 'line' contiene la línea actual leída sin el carácter de nueva linea \n
+      if (line.length == 0) {
+        emptyRows++
+        switch (emptyRows) {
+          case 1:
+            let arrMeta = bufArr;
+            bufArr = []
+            store.metadata(arrMeta);
+            break;
+          case 2:
+            let arrSensors = bufArr;
+            bufArr = []
+            store.sensors(arrSensors);
+            break;
         }
+      } else {
+        csv
+          .fromString(line)
+          .on("data", function(data) {
+            if (emptyRows < 2) {
+              bufArr.push(data)
+            } else {
+              data = data.map(Number);
+              if (data[0] >= nextSecond) {
+                arrValues = bufArr;
+                store.values(arrValues, nextSecond - 1, lap)
+                nextSecond++;
+                bufArr = [];
+                bufArr.push(data)
+              } else if (beaconMarkers.some(elem => elem === data[0])) {
+                bufArr.push(data)
+                arrValues = bufArr;
+                store.values(arrValues, nextSecond - 1, lap)
+                lap++;
+                nextSecond = 1;
+                bufArr = [];
+              } else {
+                bufArr.push(data)
+              }
+            }
+          })
+          .on("end", function() {});
+      }
+    }));
 
-    },
+    lr.on('end', function() {
+      // All lines are read, file is closed now.
+      bulk.execute(function(error) {
+        return error;
+      })
+      console.log(`Read finished: ${(Date.now()-start)/1000}s, ${lineNum} lines`);
+    });
 
-    'removeCSV': function(id) {
-        Csvs.remove(id);
+
+
+    var store = {
+      metadata: function(arr) {
+        var metaObj = {};
+        for (var i = 2; i < arr.length; i++) {
+          key = arr[i].shift();
+          if (arr[i].length <= 1) {
+            metaObj[key] = arr[i][0]
+          } else {
+            metaObj[key] = arr[i]
+          }
+        };
+
+        freq = Number(metaObj["Sample Rate"])
+        beaconMarkers = metaObj["Beacon Markers"].split(", ").map(Number)
+
+        for (var i = 1; i < beaconMarkers.length; i++) {
+          beaconMarkers[i] = beaconMarkers[i] - beaconMarkers[i - 1]
+        };
+
+        Tests.update({
+          _id: file._id
+        }, {
+          $set: {
+            "meta": metaObj
+          }
+        });
+        return;
+      },
+      sensors: function(arr) {
+        sensorNames = arr[0]
+        Tests.update({
+          _id: file._id
+        }, {
+          $set: {
+            "sensors": sensorNames
+          }
+        })
+
+        sensorArr = [];
+        for (var i = 0; i < arr[0].length; i++) {
+          sensorArr[i] = {
+            "fromTest": file._id,
+            "name": arr[0][i],
+            "customName": arr[1][i],
+            "units": arr[2][i],
+            "sensorId": arr[3][i],
+            "sampleRate": freq
+          }
+        }
+        return
+      },
+      values: function(arr, second, lap) {
+
+        var tr = new Array(sensorArr.length);
+        for (var i = 1; i < arr.length; i++) {
+          for (var j = 0; j < arr[i].length; j++) {
+            if (tr[j] === undefined) {
+              tr[j] = [];
+            }
+            tr[j][i - 1] = {
+              "t": arr[i][0],
+              "v": arr[i][j]
+            }
+          }
+        }
+        for (var i = 1; i < sensorArr.length; i++) {
+          bulk.insert({
+            ...sensorArr[i],
+            "lap": lap,
+            "second": second,
+            "data": tr[i]
+          })
+        }
+        return;
+      }
     }
 
+  },
+
+  'deleteTest': function(id) {
+    Tests.remove(id);
+    Csvs.remove(id);
+    Sensors.remove({
+      'fromTest': id
+    });
+  },
+
+  'getEllipse': function(id) {
+    var lat = Sensors.aggregate(
+      {$match: {"fromTest": id, "name": "Lateral_acc"}},
+      {$group: {_id: null, v:{$push: "$data.v"}}},
+    );
+
+    var long = Sensors.aggregate(
+      {$match: {"fromTest": id, "name": "Longitudinal_a"}},
+      {$group: {_id: null, v:{$push: "$data.v"}}},
+    );
+
+    return _.zip(_.flatten(lat[0].v), _.flatten(long[0].v));
+    ;
+  },
+
+  'getData': function(id, sensors) {
+    let data = _.map(sensors, function(item){
+      return _.flatten(Sensors.aggregate(
+        {$match: {"fromTest": id, "name": item}},
+        {$group: {_id: null, t:{$push: "$data.t"}, v:{$push: "$data.v"}}},
+      )[0].v);
+    })
+    return data;
+  },
 })
 
 Meteor.publish('Test', function(id) {
-    return Sensors.find({
-        "fromTest": id
-    });
+  return Sensors.find({
+    "fromTest": id
+  });
 });
 
 Meteor.publish('Meta', function(id) {
-    return Tests.find({
-        "_id": id
-    });
+  return Tests.find({
+    "_id": id
+  });
 });
 
 Meteor.publish('Tests', function() {

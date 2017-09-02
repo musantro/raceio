@@ -1,28 +1,16 @@
 Template.ellipse.rendered = function() {
 
-  const latAcc = Sensors.findOne({
-    "name": "Lateral_acc"
-  });
-  const longAcc = Sensors.findOne({
-    "name": "Longitudinal_a"
+  const id = Router.current().params._id;
+
+  Meteor.call('getEllipse', id, function(error, result) {
+    if (error) {
+      console.error(error);
+    } else {
+      bam(result);
+    }
   })
-  // const data = test.values;
-  // Sólo coge el minuto 0 segundo 1...
-  let latArr = [];
-  let longArr = [];
 
-
-  createData(latAcc.values, latArr)
-  createData(longAcc.values, longArr)
-
-  let frictionData = [];
-
-  for (var i = 0; i < latArr.length && i < longArr.length; i++) {
-    frictionData[i] = [Number(latArr[i]), Number(longArr[i])];
-  }
-
-  console.log(frictionData);
-
+let bam = function(frictionData) {
   jQuery('#graph-area').highcharts({
     chart: {
       type: 'scatter',
@@ -90,9 +78,10 @@ Template.ellipse.rendered = function() {
     },
     series: [{
       name: 'Acceleration',
-      color: 'rgba(0, 0, 0, .5)',
+      color: 'rgba(0, 0, 0, .3)',
       data: frictionData
     }]
   });
+}
 
 }
