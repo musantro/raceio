@@ -119,6 +119,14 @@ Meteor.methods({
       },
       sensors: function(arr) {
         sensorNames = arr[0]
+        Tests.update({
+          _id: file._id
+        }, {
+          $set: {
+            "sensors": sensorNames
+          }
+        })
+        
         sensorArr = [];
         for (var i = 0; i < arr[0].length; i++) {
           sensorArr[i] = {
@@ -181,7 +189,17 @@ Meteor.methods({
 
     return _.zip(_.flatten(lat[0].v), _.flatten(long[0].v));
     ;
-  }
+  },
+
+  'getData': function(id) {
+    var lat = Sensors.aggregate(
+      {$match: {"fromTest": id, "name": "Distance"}},
+      {$group: {_id: null, t:{$push: "$data.t"}, v:{$push: "$data.v"}}},
+    );
+
+    return _.flatten(lat[0].v);
+    ;
+  },
 })
 
 Meteor.publish('Test', function(id) {

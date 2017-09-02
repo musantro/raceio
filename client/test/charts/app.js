@@ -1,56 +1,58 @@
 Template.charts.rendered = function() {
-  const test = Sensors.findOne({
-    "name": "Time"
-  });
-  const data = test.values;
-  // Sólo coge el minuto 0 segundo 1...
-  let yData = []
 
+  const id = Router.current().params._id;
+  const sampleRate = Number(Tests.findOne(id).meta["Sample Rate"]);
 
-  createData(data, yData)
+  Meteor.call('getData', id, function(error, result) {
+    if (error) {
+      console.error(error);
+    } else {
+      printData(result)
+    }
+  })
 
-  yData = yData.map(Number);
-
-  var returnobject = {
-    chart: {
-      zoomType: 'x'
-    },
-    plotOptions: {
-      series: {
-        animation: false
-      }
-    },
-    title: {
-      text: ``,
-    },
-    xAxis: {
-      title: {
-        text: 'Time'
+  let printData = function(yData) {
+    var returnobject = {
+      chart: {
+        zoomType: 'x'
       },
-      labels: {
-        formatter: function() {
-          return this.value / test.sampleRate
+      plotOptions: {
+        series: {
+          animation: false
         }
-      }
-    },
-    yAxis: {
-      title: {
-        text: `${test.name}`
       },
-    },
-    tooltip: {
-      crosshairs: [true, true],
-    },
-    series: [{
-      name: `${test.name}`,
-      data: yData,
+      title: {
+        text: ``,
+      },
+      xAxis: {
+        title: {
+          text: 'Time'
+        },
+        labels: {
+          formatter: function() {
+            return this.value / sampleRate
+          }
+        }
+      },
+      yAxis: {
+        title: {
+          text: "yAxis"
+        },
+      },
       tooltip: {
-        valueSuffix: ` ${test.units}`
-      }
-    }],
+        enabled: false,
+        crosshairs: [true, true],
+      },
+      series: [{
+        name: `nameSeries`,
+        data: yData,
+        tooltip: {
+          valueSuffix: ` units`
+        }
+      }],
 
-  };
-
-  jQuery('#graph-area').highcharts(returnobject);
+    };
+    jQuery('#graph-area').highcharts(returnobject);
+  }
 
 };
