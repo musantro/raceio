@@ -4,93 +4,20 @@ Template.charts.onRendered(function() {
 
 Template.charts.events({
     "change #select-sensors": function(event, template) {
-        sensors = template.$('#select-sensors').val()
-        plotIt(sensors);
+        const id = Router.current().params._id;
+        const sampleRate = Number(Tests.findOne(id).meta["Sample Rate"]);
 
-        function plotIt(sensors) {
-            const test = Sensors.findOne({})
-            var returnobject = {
-                chart: {
-                    zoomType: 'x'
-                },
-                plotOptions: {
-                  series: {
-                    animation: false
-                  }
-                },
-                title: {
-                    text: ``,
-                },
-                xAxis: {
-                    title: {
-                        text: 'Time'
-                    },
-                    labels: {
-                        formatter: function() {
-                            return this.value / test.sampleRate
-                        }
-                    }
-                },
-                yAxis: [],
-
-                tooltip: {
-                    crosshairs: [true,true],
-                    shared: true
-                },
-                series: []
-
-            };
-
-            for (var i = 0; i < sensors.length; i++) {
-                var sensor = Sensors.findOne({
-                    "name": sensors[i]
-                })
-                if (i == 0) {
-                    returnobject.yAxis.push({
-                        title: {
-                            text: sensors[i],
-                            style: {
-                                color: Highcharts.getOptions().colors[i]
-                            }
-                        },
-                        labels: {
-                            format: '{value} ' + sensor.units,
-                            style: {
-                                color: Highcharts.getOptions().colors[i]
-                            }
-                        }
-                    })
-                } else {
-                    returnobject.yAxis.push({
-                        title: {
-                            text: sensor.customName,
-                            style: {
-                                color: Highcharts.getOptions().colors[i]
-                            }
-                        },
-                        labels: {
-                            format: '{value} ' + sensor.units,
-                            style: {
-                                color: Highcharts.getOptions().colors[i]
-                            }
-                        },
-                        opposite: true
-                    })
-                }
-                createData(sensor.values, data = []);
-                data = data.map(Number);
-
-                returnobject.series.push({
-                    name: sensor.customName,
-                    data: data,
-                    yAxis: i,
-                    tooltip: {
-                      valueSuffix: ` ${sensor.units}`
-                    }
-                })
+        let sensors = template.$('#select-sensors').val() // devuelve Arr de strings
+        if (sensors.length > 3) {
+          Materialize.toast(`You've selected ${sensors.length} sensors. Only 3 permitted`, 3000)
+        } else {
+          Meteor.call('getData', id, sensors, function(error, result) {
+            if (error) {
+              console.error(error);
+            } else {
+              plotIt(result, sensors, sampleRate);
             }
-
-            jQuery('#graph-area').highcharts(returnobject);
+          })
         }
     }
 })

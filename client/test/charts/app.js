@@ -2,57 +2,14 @@ Template.charts.rendered = function() {
 
   const id = Router.current().params._id;
   const sampleRate = Number(Tests.findOne(id).meta["Sample Rate"]);
+  let initialData = ["Brake_Press_af", "TPS", "Velocidad Delante"]
 
-  Meteor.call('getData', id, function(error, result) {
+  Meteor.call('getData', id, initialData, function(error, result) {
     if (error) {
       console.error(error);
     } else {
-      printData(result)
+      plotIt(result, initialData, sampleRate);
     }
   })
-
-  let printData = function(yData) {
-    var returnobject = {
-      chart: {
-        zoomType: 'x'
-      },
-      plotOptions: {
-        series: {
-          animation: false
-        }
-      },
-      title: {
-        text: ``,
-      },
-      xAxis: {
-        title: {
-          text: 'Time'
-        },
-        labels: {
-          formatter: function() {
-            return this.value / sampleRate
-          }
-        }
-      },
-      yAxis: {
-        title: {
-          text: "yAxis"
-        },
-      },
-      tooltip: {
-        enabled: false,
-        crosshairs: [true, true],
-      },
-      series: [{
-        name: `nameSeries`,
-        data: yData,
-        tooltip: {
-          valueSuffix: ` units`
-        }
-      }],
-
-    };
-    jQuery('#graph-area').highcharts(returnobject);
-  }
 
 };

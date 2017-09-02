@@ -126,7 +126,7 @@ Meteor.methods({
             "sensors": sensorNames
           }
         })
-        
+
         sensorArr = [];
         for (var i = 0; i < arr[0].length; i++) {
           sensorArr[i] = {
@@ -191,14 +191,14 @@ Meteor.methods({
     ;
   },
 
-  'getData': function(id) {
-    var lat = Sensors.aggregate(
-      {$match: {"fromTest": id, "name": "Distance"}},
-      {$group: {_id: null, t:{$push: "$data.t"}, v:{$push: "$data.v"}}},
-    );
-
-    return _.flatten(lat[0].v);
-    ;
+  'getData': function(id, sensors) {
+    let data = _.map(sensors, function(item){
+      return _.flatten(Sensors.aggregate(
+        {$match: {"fromTest": id, "name": item}},
+        {$group: {_id: null, t:{$push: "$data.t"}, v:{$push: "$data.v"}}},
+      )[0].v);
+    })
+    return data;
   },
 })
 
