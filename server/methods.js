@@ -1,6 +1,6 @@
 Meteor.methods({
 
-  'storeTest': function(file) {    // Creamos documento en la colección Tests para trabajar con la _id
+  'storeTest': function(file) { // Creamos documento en la colección Tests para trabajar con la _id
     Tests.insert({
       _id: file._id
     });
@@ -24,7 +24,7 @@ Meteor.methods({
       LineByLineReader = require('line-by-line'),
       lr = new LineByLineReader(file.path);
 
-      console.log(`New upload in progress... ${file._id}`);
+    console.log(`New upload in progress... ${file._id}`);
     // Si line-by-line da error, nos lo muestra
     lr.on('error', function(err) {
       // 'err' contiene un objeto error
@@ -177,27 +177,82 @@ Meteor.methods({
   },
 
   'getEllipse': function(id) {
-    var lat = Sensors.aggregate(
-      {$match: {"fromTest": id, "name": "Lateral_acc"}},
-      {$group: {_id: null, v:{$push: "$data.v"}}},
-    );
+    var lat = Sensors.aggregate({
+      $match: {
+        "fromTest": id,
+        "name": "Lateral_acc"
+      }
+    }, {
+      $group: {
+        _id: null,
+        v: {
+          $push: "$data.v"
+        }
+      }
+    }, );
 
-    var long = Sensors.aggregate(
-      {$match: {"fromTest": id, "name": "Longitudinal_a"}},
-      {$group: {_id: null, v:{$push: "$data.v"}}},
-    );
+    var long = Sensors.aggregate({
+      $match: {
+        "fromTest": id,
+        "name": "Longitudinal_a"
+      }
+    }, {
+      $group: {
+        _id: null,
+        v: {
+          $push: "$data.v"
+        }
+      }
+    }, );
 
-    return _.zip(_.flatten(lat[0].v), _.flatten(long[0].v));
-    ;
+    return _.zip(_.flatten(lat[0].v), _.flatten(long[0].v));;
   },
 
-  'getData': function(id, sensors) {
-    let data = _.map(sensors, function(item){
-      return _.flatten(Sensors.aggregate(
-        {$match: {"fromTest": id, "name": item}},
-        {$group: {_id: null, t:{$push: "$data.t"}, v:{$push: "$data.v"}}},
-      )[0].v);
+  'getData': function(id, sensors, isFilter) {
+    let data = _.map(sensors, function(item) {
+      return _.flatten(Sensors.aggregate({
+        $match: {
+          "fromTest": id,
+          "name": item
+        }
+      }, {
+        $group: {
+          _id: null,
+          t: {
+            $push: "$data.t"
+          },
+          v: {
+            $push: "$data.v"
+          }
+        }
+      }, )[0].v);
     })
+
+    if (isFilter) {
+      var Fili = require('fili');
+      //  Instance of a filter coefficient calculator
+      var iirCalculator = new Fili.CalcCascades();
+
+      // get available filters
+      var availableFilters = iirCalculator.available();
+
+      // calculate filter coefficients
+      var iirFilterCoeffs = iirCalculator.lowpass({
+          order: 3, // cascade 3 biquad filters (max: 5)
+          characteristic: 'butterworth',
+          transform: 'matchedZ',
+          Fs: 50, // sampling frequency
+          Fc: 5, // cutoff frequency / center frequency for bandpass, bandstop, peak
+          preGain: false // uses k when true for gain correction b[0] otherwise
+        });
+
+      // create a filter instance from the calculated coeffs
+      var iirFilter = new Fili.IirFilter(iirFilterCoeffs);
+
+      data = _.map(data, function(sensor){
+        return iirFilter.multiStep(sensor)
+      })
+    }
     return data;
   },
 })
