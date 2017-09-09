@@ -255,6 +255,10 @@ Meteor.methods({
     }
     return data;
   },
+
+  'checkAlarms': function(id){
+    
+  }
 })
 
 Meteor.publish('Test', function(id) {
