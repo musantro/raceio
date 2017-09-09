@@ -104,6 +104,11 @@ Meteor.methods({
         freq = Number(metaObj["Sample Rate"])
         beaconMarkers = metaObj["Beacon Markers"].split(", ").map(Number)
 
+        let testDate = metaObj["Date"].split("/").map(Number);
+        testDate.unshift(testDate.pop());
+        testDate[0] += 2000;
+        testDate[1] -= 1;
+
         for (var i = 1; i < beaconMarkers.length; i++) {
           beaconMarkers[i] = beaconMarkers[i] - beaconMarkers[i - 1]
         };
@@ -112,6 +117,7 @@ Meteor.methods({
           _id: file._id
         }, {
           $set: {
+            "dateUTC" : Date.UTC(testDate[0],testDate[1], testDate[2]),
             "meta": metaObj
           }
         });
